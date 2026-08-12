@@ -1,29 +1,6 @@
 /* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-img-element */
 import type { BroadcastHubData, PublicBroadcastProgram, PublicVideo } from "../lib/public-content";
-
-function streamKind(url: string) {
-  if (!url) return "empty";
-  if (/\/api\/media\/|\.(mp4|webm|ogg)(\?|$)/i.test(url)) return "video";
-  return "embed";
-}
-
-function embedUrl(value: string) {
-  try {
-    const url = new URL(value);
-    if (url.hostname.includes("youtu.be")) return `https://www.youtube.com/embed/${url.pathname.split("/").filter(Boolean)[0]}?autoplay=1&mute=1`;
-    if (url.hostname.includes("youtube.com")) {
-      const id = url.searchParams.get("v") || url.pathname.match(/\/(?:live|embed)\/([^/?]+)/)?.[1];
-      return id ? `https://www.youtube.com/embed/${id}?autoplay=1&mute=1` : value;
-    }
-    if (url.hostname.includes("vimeo.com")) {
-      const id = url.pathname.split("/").filter(Boolean).pop();
-      return id ? `https://player.vimeo.com/video/${id}?autoplay=1&muted=1` : value;
-    }
-    return value;
-  } catch {
-    return value;
-  }
-}
+import LiveChannelPlayer from "./LiveChannelPlayer";
 
 function formatTime(value: string) {
   const [hourValue, minute = "00"] = value.split(":");
@@ -58,7 +35,6 @@ function ProgramCard({ program }: { program: PublicBroadcastProgram }) {
 
 export default function BroadcastHub({ data, videos, expanded = false }: { data: BroadcastHubData; videos: PublicVideo[]; expanded?: boolean }) {
   const { settings, programs } = data;
-  const playerKind = streamKind(settings.streamUrl);
   const schedule = programs.slice(0, expanded ? 8 : 4);
   const videoLimit = expanded ? 8 : 4;
   return (
@@ -72,10 +48,9 @@ export default function BroadcastHub({ data, videos, expanded = false }: { data:
         <div className="vd-live-stage">
           <article className="vd-live-player">
             <div className="vd-live-screen">
-              {playerKind === "video" ? <video src={settings.streamUrl} controls autoPlay muted playsInline poster={settings.posterUrl || undefined} /> : playerKind === "embed" ? <iframe src={embedUrl(settings.streamUrl)} title={settings.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen /> : <div className="vd-live-offline" style={settings.posterUrl ? { backgroundImage: `linear-gradient(90deg, rgba(1, 13, 39, .9), rgba(1, 45, 116, .55)), url(${settings.posterUrl})` } : undefined}><img src="/vd-noticias-logo.png" alt="VD Noticias" /><span>PRÓXIMA TRANSMISIÓN</span><b>La señal en vivo aparecerá aquí</b><small>Actívala desde Emisión y programación en la sala de redacción.</small></div>}
-              <div className={`vd-live-badge ${settings.isLive ? "is-live" : ""}`}><i />{settings.isLive ? "EN VIVO" : "PRÓXIMAMENTE"}</div>
+              <LiveChannelPlayer settings={settings} />
             </div>
-            <div className="vd-live-copy"><span>SEÑAL DE VISIÓN DOMINICANA TV</span><h3>{settings.title}</h3><p>{settings.description}</p>{settings.streamUrl ? <a href={settings.streamUrl} target="_blank" rel="noreferrer">Abrir transmisión ↗</a> : <a href="/programacion#programas">Conocer los programas →</a>}</div>
+            <div className="vd-live-copy"><span>SEÑAL PERMANENTE DE VISIÓN DOMINICANA TV</span><h3>{settings.title}</h3><p>{settings.description}</p><a href="/programacion#programas">Ver parrilla completa →</a></div>
           </article>
 
           <aside className="vd-on-air">
@@ -83,6 +58,7 @@ export default function BroadcastHub({ data, videos, expanded = false }: { data:
             <div className="vd-schedule-list">
               {schedule.map((program, index) => <article key={program.id}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{program.scheduleDay}</small><h4>{program.title}</h4><p>{program.kind === "podcast" ? "Pódcast" : "Programa"}{program.scheduleTime ? ` · ${formatTime(program.scheduleTime)}` : ""}</p></div></article>)}
             </div>
+            <div className="vd-channel-uptime"><i /><span><b>Canal preparado para operar 24/7</b><small>Principal, respaldo y continuidad</small></span></div>
             <a className="vd-schedule-link" href="/programacion#programas">Ver todos los espacios →</a>
           </aside>
         </div>

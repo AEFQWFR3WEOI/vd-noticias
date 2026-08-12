@@ -11,6 +11,7 @@ const schemaStatements = [
   `CREATE TABLE IF NOT EXISTS article_revisions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, article_id INTEGER NOT NULL, editor_email TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL, status TEXT NOT NULL, note TEXT DEFAULT '' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS media_assets (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, object_key TEXT NOT NULL UNIQUE, filename TEXT NOT NULL, content_type TEXT NOT NULL, size INTEGER NOT NULL, alt_text TEXT DEFAULT '' NOT NULL, uploaded_by TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS broadcast_settings (id INTEGER PRIMARY KEY NOT NULL, is_live INTEGER DEFAULT 0 NOT NULL, stream_url TEXT DEFAULT '' NOT NULL, title TEXT DEFAULT 'Visión Dominicana TV en vivo' NOT NULL, description TEXT DEFAULT 'Noticias, entrevistas y cobertura especial desde República Dominicana.' NOT NULL, poster_url TEXT DEFAULT '' NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS broadcast_channels (id INTEGER PRIMARY KEY NOT NULL, enabled INTEGER DEFAULT 1 NOT NULL, always_on INTEGER DEFAULT 1 NOT NULL, is_live INTEGER DEFAULT 0 NOT NULL, source_mode TEXT DEFAULT 'automatic' NOT NULL, provider TEXT DEFAULT 'cloudflare' NOT NULL, primary_url TEXT DEFAULT '' NOT NULL, backup_url TEXT DEFAULT '' NOT NULL, continuity_url TEXT DEFAULT '' NOT NULL, title TEXT DEFAULT 'Visión Dominicana TV en vivo' NOT NULL, description TEXT DEFAULT 'Noticias, entrevistas y cobertura especial desde República Dominicana.' NOT NULL, poster_url TEXT DEFAULT '' NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS broadcast_programs (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, title TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, kind TEXT DEFAULT 'program' NOT NULL, description TEXT DEFAULT '' NOT NULL, presenter TEXT DEFAULT '' NOT NULL, cover_image_url TEXT DEFAULT '' NOT NULL, schedule_day TEXT DEFAULT 'Próximamente' NOT NULL, schedule_time TEXT DEFAULT '' NOT NULL, destination_url TEXT DEFAULT '' NOT NULL, active INTEGER DEFAULT 1 NOT NULL, position INTEGER DEFAULT 0 NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS ad_placements (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, code TEXT NOT NULL UNIQUE, name TEXT NOT NULL, dimensions TEXT NOT NULL, location TEXT NOT NULL, base_rate INTEGER DEFAULT 0 NOT NULL, active INTEGER DEFAULT 1 NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS ad_campaigns (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, client_name TEXT NOT NULL, contact_email TEXT NOT NULL, placement_code TEXT NOT NULL, creative_media_id INTEGER, destination_url TEXT, starts_at TEXT NOT NULL, ends_at TEXT NOT NULL, status TEXT DEFAULT 'proposal' NOT NULL, impressions INTEGER DEFAULT 0 NOT NULL, clicks INTEGER DEFAULT 0 NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
@@ -44,6 +45,15 @@ export async function getDbReady() {
         "Noticias, entrevistas y cobertura especial desde República Dominicana."
       )
       .run();
+
+    // Preserve the signal already configured before the 24/7 control center
+    // existed. This only runs once because the channel id is the primary key.
+    await env.DB.prepare(
+      `INSERT OR IGNORE INTO broadcast_channels
+        (id, enabled, always_on, is_live, source_mode, provider, primary_url, backup_url, continuity_url, title, description, poster_url, updated_at)
+       SELECT id, 1, 1, is_live, 'automatic', 'cloudflare', stream_url, '', '', title, description, poster_url, updated_at
+       FROM broadcast_settings WHERE id = 1`
+    ).run();
 
     const articleInsert = `INSERT INTO articles
       (title, slug, summary, body, category_slug, author_email, hero_image_url, status, is_breaking, is_featured, seo_title, seo_description, published_at, created_at, updated_at)

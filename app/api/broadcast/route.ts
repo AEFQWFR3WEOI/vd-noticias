@@ -1,6 +1,6 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { getDbReady } from "../../../db";
-import { broadcastPrograms, broadcastSettings } from "../../../db/schema";
+import { broadcastChannels, broadcastPrograms } from "../../../db/schema";
 import { canPublish, getEditorialUser } from "../../lib/editorial-auth";
 
 function slugify(value: string) {
@@ -34,7 +34,7 @@ export async function GET() {
   if (!user) return Response.json({ error: "Acceso no autorizado" }, { status: 403 });
   const db = await getDbReady();
   const [settings, programs] = await Promise.all([
-    db.select().from(broadcastSettings).where(eq(broadcastSettings.id, 1)).limit(1),
+    db.select().from(broadcastChannels).where(eq(broadcastChannels.id, 1)).limit(1),
     db.select().from(broadcastPrograms).orderBy(asc(broadcastPrograms.position), desc(broadcastPrograms.createdAt)).limit(100),
   ]);
   return Response.json({ settings: settings[0] ?? null, programs });
@@ -51,21 +51,41 @@ export async function POST(request: Request) {
       const title = String(body.title ?? "").trim();
       const description = String(body.description ?? "").trim();
       if (!title || !description) return Response.json({ error: "Completa el título y la descripción de la señal" }, { status: 400 });
-      const streamUrl = safeUrl(body.streamUrl);
-      if (String(body.streamUrl ?? "").trim() && !streamUrl) return Response.json({ error: "El enlace de transmisión no es válido" }, { status: 400 });
-      const [settings] = await db.insert(broadcastSettings).values({
+      const primaryUrl = safeUrl(body.primaryUrl);
+      const backupUrl = safeUrl(body.backupUrl);
+      const continuityUrl = safeUrl(body.continuityUrl);
+      if (String(body.primaryUrl ?? "").trim() && !primaryUrl) return Response.json({ error: "El enlace de la señal principal no es válido" }, { status: 400 });
+      if (String(body.backupUrl ?? "").trim() && !backupUrl) return Response.json({ error: "El enlace de respaldo no es válido" }, { status: 400 });
+      if (String(body.continuityUrl ?? "").trim() && !continuityUrl) return Response.json({ error: "El enlace de continuidad no es válido" }, { status: 400 });
+      const allowedModes = new Set(["automatic", "primary", "backup", "continuity", "maintenance"]);
+      const sourceMode = allowedModes.has(String(body.sourceMode)) ? String(body.sourceMode) as "automatic" | "primary" | "backup" | "continuity" | "maintenance" : "automatic";
+      const allowedProviders = new Set(["cloudflare", "youtube", "vimeo", "direct"]);
+      const provider = allowedProviders.has(String(body.provider)) ? String(body.provider) as "cloudflare" | "youtube" | "vimeo" | "direct" : "cloudflare";
+      const [settings] = await db.insert(broadcastChannels).values({
         id: 1,
+        enabled: body.enabled === true || body.enabled === "on" || body.enabled === "true",
+        alwaysOn: body.alwaysOn === true || body.alwaysOn === "on" || body.alwaysOn === "true",
         isLive: body.isLive === true || body.isLive === "on" || body.isLive === "true",
-        streamUrl,
+        sourceMode,
+        provider,
+        primaryUrl,
+        backupUrl,
+        continuityUrl,
         title,
         description,
         posterUrl: safeUrl(body.posterUrl),
         updatedAt: new Date().toISOString(),
       }).onConflictDoUpdate({
-        target: broadcastSettings.id,
+        target: broadcastChannels.id,
         set: {
+          enabled: body.enabled === true || body.enabled === "on" || body.enabled === "true",
+          alwaysOn: body.alwaysOn === true || body.alwaysOn === "on" || body.alwaysOn === "true",
           isLive: body.isLive === true || body.isLive === "on" || body.isLive === "true",
-          streamUrl,
+          sourceMode,
+          provider,
+          primaryUrl,
+          backupUrl,
+          continuityUrl,
           title,
           description,
           posterUrl: safeUrl(body.posterUrl),

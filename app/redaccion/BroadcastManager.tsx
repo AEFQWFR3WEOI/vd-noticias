@@ -4,8 +4,14 @@
 import { FormEvent, useEffect, useState } from "react";
 
 type Settings = {
+  enabled: boolean;
+  alwaysOn: boolean;
   isLive: boolean;
-  streamUrl: string;
+  sourceMode: "automatic" | "primary" | "backup" | "continuity" | "maintenance";
+  provider: "cloudflare" | "youtube" | "vimeo" | "direct";
+  primaryUrl: string;
+  backupUrl: string;
+  continuityUrl: string;
   title: string;
   description: string;
   posterUrl: string;
@@ -23,8 +29,14 @@ type Program = {
 };
 
 const fallbackSettings: Settings = {
+  enabled: true,
+  alwaysOn: true,
   isLive: false,
-  streamUrl: "",
+  sourceMode: "automatic",
+  provider: "cloudflare",
+  primaryUrl: "",
+  backupUrl: "",
+  continuityUrl: "",
   title: "Visión Dominicana TV en vivo",
   description: "Noticias, entrevistas y cobertura especial desde República Dominicana.",
   posterUrl: "",
@@ -78,14 +90,23 @@ export default function BroadcastManager() {
 
   return (
     <div className="broadcast-manager">
-      <form className="broadcast-live-form" onSubmit={saveLive} key={`${settings.streamUrl}-${settings.title}-${settings.isLive}`}>
-        <div className="broadcast-admin-title"><span>SEÑAL PRINCIPAL</span><h3>Control de transmisión</h3><p>Activa la señal y pega un enlace de YouTube Live, Vimeo o video directo.</p></div>
-        <label className="broadcast-live-toggle"><input type="checkbox" name="isLive" defaultChecked={settings.isLive} key={`live-${settings.isLive}`} /><span><b>Transmitiendo ahora</b><small>Mostrará la etiqueta EN VIVO en todo el periódico.</small></span></label>
+      <form className="broadcast-live-form" onSubmit={saveLive} key={`${settings.primaryUrl}-${settings.backupUrl}-${settings.continuityUrl}-${settings.title}-${settings.sourceMode}-${settings.isLive}`}>
+        <div className="broadcast-admin-title"><span>CANAL VD 24/7</span><h3>Centro de control de transmisión</h3><p>Cambia entre la señal principal, el respaldo y la continuidad sin modificar el periódico. Recomendado: Cloudflare Stream con un Live Input estable.</p></div>
+        <div className="broadcast-control-state">
+          <label className="broadcast-live-toggle"><input type="checkbox" name="enabled" defaultChecked={settings.enabled} /><span><b>Canal visible</b><small>Permite reproducir la señal en el periódico.</small></span></label>
+          <label className="broadcast-live-toggle"><input type="checkbox" name="alwaysOn" defaultChecked={settings.alwaysOn} /><span><b>Operación 24/7</b><small>Usará continuidad cuando no haya un programa en directo.</small></span></label>
+          <label className="broadcast-live-toggle"><input type="checkbox" name="isLive" defaultChecked={settings.isLive} /><span><b>Programa en directo</b><small>Mostrará la etiqueta EN VIVO en todo el periódico.</small></span></label>
+        </div>
+        <label>Fuente activa<select name="sourceMode" defaultValue={settings.sourceMode}><option value="automatic">Automático: principal → respaldo → continuidad</option><option value="primary">Forzar señal principal</option><option value="backup">Forzar señal de respaldo</option><option value="continuity">Forzar continuidad</option><option value="maintenance">Modo mantenimiento</option></select></label>
+        <label>Proveedor principal<select name="provider" defaultValue={settings.provider}><option value="cloudflare">Cloudflare Stream (recomendado)</option><option value="youtube">YouTube Live</option><option value="vimeo">Vimeo</option><option value="direct">Video directo</option></select></label>
         <label>Título de la transmisión<input name="title" required defaultValue={settings.title} /></label>
         <label>Descripción<textarea name="description" required rows={3} defaultValue={settings.description} /></label>
-        <label>Enlace de transmisión<input name="streamUrl" type="url" defaultValue={settings.streamUrl} placeholder="https://youtube.com/watch?v=..." /></label>
+        <label>1. Reproductor principal<input name="primaryUrl" defaultValue={settings.primaryUrl} placeholder="https://customer-....cloudflarestream.com/INPUT_ID/iframe" /><small>Es el enlace público del reproductor, nunca la clave RTMPS/SRT.</small></label>
+        <label>2. Reproductor de respaldo<input name="backupUrl" defaultValue={settings.backupUrl} placeholder="Segundo Live Input o señal alternativa" /><small>Utilízalo si falla el estudio, el codificador o la conexión principal.</small></label>
+        <label>3. Video o señal de continuidad<input name="continuityUrl" defaultValue={settings.continuityUrl} placeholder="Enlace de Multimedia o segundo canal 24/7" /><small>Se repite automáticamente para que la pantalla nunca quede vacía.</small></label>
         <label>Imagen de espera<input name="posterUrl" defaultValue={settings.posterUrl} placeholder="Enlace de la Biblioteca multimedia" /></label>
-        <button disabled={busy}>Guardar señal</button>
+        <aside className="broadcast-security-note"><b>Seguridad</b><p>La clave de emisión se configura solamente en OBS o en el servidor de continuidad. No la pegues aquí ni la subas a GitHub.</p></aside>
+        <button disabled={busy}>Guardar y cambiar el canal</button>
       </form>
 
       <form className="broadcast-program-form" onSubmit={createProgram}>

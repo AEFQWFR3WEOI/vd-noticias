@@ -73,6 +73,29 @@ export const broadcastSettings = sqliteTable("broadcast_settings", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+// The public player reads this single-row channel control table. It is separate
+// from broadcast_settings so existing installations can be upgraded without a
+// destructive ALTER TABLE migration.
+export const broadcastChannels = sqliteTable("broadcast_channels", {
+  id: integer("id").primaryKey(),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  alwaysOn: integer("always_on", { mode: "boolean" }).notNull().default(true),
+  isLive: integer("is_live", { mode: "boolean" }).notNull().default(false),
+  sourceMode: text("source_mode", { enum: ["automatic", "primary", "backup", "continuity", "maintenance"] })
+    .notNull()
+    .default("automatic"),
+  provider: text("provider", { enum: ["cloudflare", "youtube", "vimeo", "direct"] })
+    .notNull()
+    .default("cloudflare"),
+  primaryUrl: text("primary_url").notNull().default(""),
+  backupUrl: text("backup_url").notNull().default(""),
+  continuityUrl: text("continuity_url").notNull().default(""),
+  title: text("title").notNull().default("Visión Dominicana TV en vivo"),
+  description: text("description").notNull().default("Noticias, entrevistas y cobertura especial desde República Dominicana."),
+  posterUrl: text("poster_url").notNull().default(""),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const broadcastPrograms = sqliteTable("broadcast_programs", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),

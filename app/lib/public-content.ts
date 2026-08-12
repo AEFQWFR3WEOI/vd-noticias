@@ -1,6 +1,6 @@
 import { and, desc, eq, inArray, like } from "drizzle-orm";
 import { getDbReady } from "../../db";
-import { articles, broadcastPrograms, broadcastSettings, editorialUsers, mediaAssets } from "../../db/schema";
+import { articles, broadcastChannels, broadcastPrograms, editorialUsers, mediaAssets } from "../../db/schema";
 
 export type PublicArticle = typeof articles.$inferSelect;
 export type PublicVideo = typeof mediaAssets.$inferSelect & {
@@ -10,7 +10,7 @@ export type PublicVideo = typeof mediaAssets.$inferSelect & {
   articleCategorySlug: string;
   articleSummary: string;
 };
-export type PublicBroadcastSettings = typeof broadcastSettings.$inferSelect;
+export type PublicBroadcastSettings = typeof broadcastChannels.$inferSelect;
 export type PublicBroadcastProgram = typeof broadcastPrograms.$inferSelect;
 
 export type BroadcastHubData = {
@@ -20,8 +20,14 @@ export type BroadcastHubData = {
 
 const defaultBroadcastSettings: PublicBroadcastSettings = {
   id: 1,
+  enabled: true,
+  alwaysOn: true,
   isLive: false,
-  streamUrl: "",
+  sourceMode: "automatic",
+  provider: "cloudflare",
+  primaryUrl: "",
+  backupUrl: "",
+  continuityUrl: "",
   title: "Visión Dominicana TV en vivo",
   description: "Noticias, entrevistas y cobertura especial desde República Dominicana.",
   posterUrl: "",
@@ -193,7 +199,7 @@ export async function getBroadcastHub(): Promise<BroadcastHubData> {
   try {
     const db = await getDbReady();
     const [settingsRows, programs] = await Promise.all([
-      db.select().from(broadcastSettings).where(eq(broadcastSettings.id, 1)).limit(1),
+      db.select().from(broadcastChannels).where(eq(broadcastChannels.id, 1)).limit(1),
       db.select().from(broadcastPrograms).where(eq(broadcastPrograms.active, true)).orderBy(broadcastPrograms.position, desc(broadcastPrograms.createdAt)).limit(24),
     ]);
     return {
