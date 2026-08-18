@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const editorialUsers = sqliteTable("editorial_users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -8,9 +8,26 @@ export const editorialUsers = sqliteTable("editorial_users", {
   role: text("role", { enum: ["administrator", "editor", "journalist", "commercial"] })
     .notNull()
     .default("journalist"),
+  passwordHash: text("password_hash"),
   active: integer("active", { mode: "boolean" }).notNull().default(true),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const editorialSessions = sqliteTable(
+  "editorial_sessions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id").notNull(),
+    tokenHash: text("token_hash").notNull().unique(),
+    expiresAt: text("expires_at").notNull(),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    lastSeenAt: text("last_seen_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("editorial_sessions_user_id_idx").on(table.userId),
+    index("editorial_sessions_expires_at_idx").on(table.expiresAt),
+  ],
+);
 
 export const categories = sqliteTable("categories", {
   id: integer("id").primaryKey({ autoIncrement: true }),

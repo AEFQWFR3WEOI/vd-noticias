@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDbReady } from "../../../../db";
 import { articles } from "../../../../db/schema";
-import { requireChatGPTUser } from "../../../chatgpt-auth";
+import { requireSessionUser } from "../../../session-auth";
 import { canPublish, getEditorialUser } from "../../../lib/editorial-auth";
 import ArticleEditor from "../../ArticleEditor";
 
@@ -11,7 +11,7 @@ export const metadata = { title: "Editar noticia", robots: { index: false, follo
 
 export default async function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
-  await requireChatGPTUser(`/redaccion/editar/${rawId}`);
+  await requireSessionUser(`/redaccion/editar/${rawId}`);
   const user = await getEditorialUser();
   const id = Number(rawId);
   if (!user || !Number.isInteger(id)) notFound();

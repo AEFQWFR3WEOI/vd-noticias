@@ -304,6 +304,10 @@ button, input { font: inherit; }
 .access-denied h1 { font: 800 44px Georgia, serif; color: var(--navy); margin: 8px 0 14px; }
 .access-denied p { color: var(--muted); line-height: 1.6; }
 .access-denied a { display: inline-block; margin-top: 15px; color: var(--blue); font-size: 11px; font-weight: 900; }
+.access-denied form { margin-top: 15px; }
+.access-denied form button,
+.sidebar-bottom form button { border: 0; padding: 0; background: transparent; cursor: pointer; text-decoration: underline; }
+.access-denied form button { color: var(--blue); font-size: 11px; font-weight: 900; }
 .newsroom { min-height: 100vh; background: #f1f4f8; display: grid; grid-template-columns: 230px minmax(0, 1fr); }
 .newsroom-sidebar { background: var(--navy); color: white; padding: 25px 18px; display: flex; flex-direction: column; min-height: 100vh; position: sticky; top: 0; height: 100vh; }
 .newsroom-brand { display: flex; align-items: center; gap: 8px; padding: 0 10px 24px; border-bottom: 1px solid #263d5e; }
@@ -317,6 +321,8 @@ button, input { font: inherit; }
 .sidebar-bottom b { font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
 .sidebar-bottom span { color: #ff8294; font-size: 9px; text-transform: uppercase; }
 .sidebar-bottom a { margin-top: 8px; color: #aebed3; font-size: 9px; text-decoration: underline; }
+.sidebar-bottom form { margin-top: 8px; }
+.sidebar-bottom form button { color: #aebed3; font-size: 9px; }
 .newsroom-main { padding: 38px 42px 70px; max-width: 1500px; width: 100%; }
 .newsroom-main > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 30px; margin-bottom: 28px; }
 .newsroom-main > header span, .panel-heading span { color: var(--red); font-size: 8px; font-weight: 900; letter-spacing: .16em; }
@@ -416,7 +422,7 @@ button, input { font: inherit; }
   .newsroom { grid-template-columns: 72px minmax(0, 1fr); }
   .newsroom-sidebar { padding-inline: 10px; }
   .newsroom-brand { padding-inline: 4px; }
-  .newsroom-brand b, .newsroom-sidebar nav a:not(.active), .newsroom-sidebar nav a, .sidebar-bottom b, .sidebar-bottom small, .sidebar-bottom span, .sidebar-bottom a { font-size: 0; }
+  .newsroom-brand b, .newsroom-sidebar nav a:not(.active), .newsroom-sidebar nav a, .sidebar-bottom b, .sidebar-bottom small, .sidebar-bottom span, .sidebar-bottom a, .sidebar-bottom form button { font-size: 0; }
   .newsroom-sidebar nav a::first-letter { font-size: 18px; }
   .newsroom-main { padding-inline: 24px; }
   .values-grid { grid-template-columns: 1fr 1fr; }

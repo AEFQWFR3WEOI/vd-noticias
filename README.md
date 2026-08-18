@@ -43,6 +43,31 @@ periódico almacena solamente enlaces públicos de reproducción.
 Antes de comenzar usa `git pull` y después `npm run local`. Cuando se publique
 una mejora, cierra el servidor con `Ctrl+C`, ejecuta `git pull` y reinicia.
 
+## Acceso independiente a la sala de redacción
+
+Fuera de ChatGPT Sites, la ruta `/redaccion` usa correo y contraseña propios.
+Las contraseñas se guardan en D1 como hashes `scrypt`; las sesiones son tokens
+opacos revocables guardados en D1 y enviados en una cookie `httpOnly`,
+`SameSite=Lax` y `Secure` en producción.
+
+Para crear el primer administrador en una instalación nueva:
+
+1. configura `EDITORIAL_OWNER_EMAIL` con su correo;
+2. configura `EDITORIAL_OWNER_PASSWORD` como secreto con al menos 12 caracteres;
+3. aplica las migraciones y despliega;
+4. visita `/login` e inicia sesión con esos dos valores;
+5. después del primer acceso correcto, elimina `EDITORIAL_OWNER_PASSWORD` del
+   entorno y vuelve a desplegar. El hash ya permanece en D1.
+
+`EDITORIAL_OWNER_EMAIL` puede permanecer configurado. Nunca se debe guardar la
+contraseña real en GitHub. El archivo `.dev.vars.example` documenta las variables
+sin incluir secretos. En `npm run local` se conserva el administrador automático
+para no interrumpir el trabajo diario.
+
+Los demás periodistas se crean desde **Sala de redacción → Equipo**, asignando
+correo, contraseña inicial y rol. Cambiar una contraseña o revocar una cuenta
+invalida sus sesiones abiertas.
+
 ## Arquitectura
 
 - Frontend: Next.js 16 + React 19 mediante Vinext.

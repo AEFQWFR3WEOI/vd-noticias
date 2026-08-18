@@ -10,10 +10,9 @@ import {
   mediaAssets,
 } from "../../db/schema";
 import {
-  chatGPTSignOutPath,
   isLocalEditorialIdentity,
-  requireChatGPTUser,
-} from "../chatgpt-auth";
+  requireSessionUser,
+} from "../session-auth";
 import {
   canManageAds,
   canPublish,
@@ -32,7 +31,7 @@ export const metadata = {
 };
 
 async function Newsroom() {
-  const identity = await requireChatGPTUser("/redaccion");
+  const identity = await requireSessionUser("/redaccion");
   const user = await getEditorialUser();
   if (!user)
     return (
@@ -47,7 +46,10 @@ async function Newsroom() {
           {isLocalEditorialIdentity(identity.email) ? (
             <small>Modo local</small>
           ) : (
-            <a href={chatGPTSignOutPath("/")}>Cerrar sesión</a>
+            <form action="/api/auth/logout" method="post">
+              <input type="hidden" name="returnTo" value="/" />
+              <button type="submit">Cerrar sesión</button>
+            </form>
           )}
         </div>
       </main>
@@ -140,7 +142,10 @@ async function Newsroom() {
           {isLocalEditorialIdentity(identity.email) ? (
             <small>Modo local · datos aislados</small>
           ) : (
-            <a href={chatGPTSignOutPath("/")}>Cerrar sesión</a>
+            <form action="/api/auth/logout" method="post">
+              <input type="hidden" name="returnTo" value="/" />
+              <button type="submit">Cerrar sesión</button>
+            </form>
           )}
         </div>
       </aside>

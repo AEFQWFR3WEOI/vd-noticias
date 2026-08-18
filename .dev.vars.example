@@ -1,0 +1,4 @@
+# Copia este archivo como .dev.vars únicamente si necesitas probar el login
+# independiente en un entorno que no use el acceso automático de npm run local.
+EDITORIAL_OWNER_EMAIL=propietario@vdnoticias.do
+EDITORIAL_OWNER_PASSWORD=reemplaza-esto-por-una-clave-larga-y-unica

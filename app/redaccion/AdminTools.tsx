@@ -27,7 +27,7 @@ export function TeamManager() {
     event.preventDefault(); const form = event.currentTarget; const values = Object.fromEntries(new FormData(form).entries());
     const response = await fetch("/api/team", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(values) });
     const result = await response.json() as { member?: { email: string }; error?: string };
-    setMessage(response.ok ? `${result.member?.email} ya tiene acceso interno` : result.error ?? "No se pudo guardar");
+    setMessage(response.ok ? `${result.member?.email} ya puede iniciar sesión` : result.error ?? "No se pudo guardar");
     if (response.ok) { form.reset(); await loadMembers(); }
   }
 
@@ -38,7 +38,7 @@ export function TeamManager() {
     if (response.ok) await loadMembers();
   }
 
-  return <div className="team-manager"><form className="mini-admin-form" onSubmit={submit}><label>Nombre<input name="displayName" placeholder="Nombre del periodista" /></label><label>Correo<input name="email" type="email" required placeholder="periodista@medio.com" /></label><label>Rol<select name="role" defaultValue="journalist"><option value="journalist">Periodista</option><option value="editor">Editor</option><option value="commercial">Comercial</option><option value="administrator">Administrador</option></select></label><button>Autorizar acceso</button>{message && <p>{message}</p>}</form><div className="team-access-list"><header><b>Personas autorizadas</b><span>{members.filter((member) => member.active).length} activas</span></header>{members.filter((member) => member.active).map((member) => <article key={member.id}><div><b>{member.displayName}</b><small>{member.email}</small></div><span>{member.role}</span>{member.email === currentUserEmail ? <em>Tu cuenta</em> : <button type="button" onClick={() => void revoke(member.email)}>Revocar</button>}</article>)}</div></div>;
+  return <div className="team-manager"><form className="mini-admin-form" onSubmit={submit}><label>Nombre<input name="displayName" placeholder="Nombre del periodista" /></label><label>Correo<input name="email" type="email" required placeholder="periodista@medio.com" /></label><label>Contraseña inicial<input name="password" type="password" required minLength={12} maxLength={128} autoComplete="new-password" placeholder="Mínimo 12 caracteres" /></label><label>Rol<select name="role" defaultValue="journalist"><option value="journalist">Periodista</option><option value="editor">Editor</option><option value="commercial">Comercial</option><option value="administrator">Administrador</option></select></label><button>Crear acceso</button>{message && <p>{message}</p>}</form><div className="team-access-list"><header><b>Personas autorizadas</b><span>{members.filter((member) => member.active).length} activas</span></header>{members.filter((member) => member.active).map((member) => <article key={member.id}><div><b>{member.displayName}</b><small>{member.email}</small></div><span>{member.role}</span>{member.email === currentUserEmail ? <em>Tu cuenta</em> : <button type="button" onClick={() => void revoke(member.email)}>Revocar</button>}</article>)}</div></div>;
 }
 
 export function CampaignManager() {

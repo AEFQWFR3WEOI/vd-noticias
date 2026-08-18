@@ -5,7 +5,10 @@ import { currentEditionArticles } from "./current-edition";
 let initialization: Promise<void> | null = null;
 
 const schemaStatements = [
-  `CREATE TABLE IF NOT EXISTS editorial_users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, role TEXT DEFAULT 'journalist' NOT NULL, active INTEGER DEFAULT 1 NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS editorial_users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, role TEXT DEFAULT 'journalist' NOT NULL, password_hash TEXT, active INTEGER DEFAULT 1 NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS editorial_sessions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, token_hash TEXT NOT NULL UNIQUE, expires_at TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, last_seen_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE INDEX IF NOT EXISTS editorial_sessions_user_id_idx ON editorial_sessions (user_id)`,
+  `CREATE INDEX IF NOT EXISTS editorial_sessions_expires_at_idx ON editorial_sessions (expires_at)`,
   `CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, description TEXT DEFAULT '' NOT NULL, position INTEGER DEFAULT 0 NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, title TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, summary TEXT DEFAULT '' NOT NULL, body TEXT DEFAULT '' NOT NULL, category_slug TEXT NOT NULL, author_email TEXT NOT NULL, hero_image_url TEXT, status TEXT DEFAULT 'draft' NOT NULL, is_breaking INTEGER DEFAULT 0 NOT NULL, is_featured INTEGER DEFAULT 0 NOT NULL, seo_title TEXT, seo_description TEXT, published_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS article_revisions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, article_id INTEGER NOT NULL, editor_email TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL, status TEXT NOT NULL, note TEXT DEFAULT '' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
@@ -30,6 +33,22 @@ export async function getDbReady() {
   }
   initialization ??= (async () => {
     await env.DB.batch(schemaStatements.map((statement) => env.DB.prepare(statement)));
+
+    // CREATE TABLE IF NOT EXISTS does not add columns to an existing local or
+    // hosted database. Keep older installations usable while the generated
+    // Drizzle migration is applied by adding the nullable hash column once.
+    const userColumns = await env.DB
+      .prepare("PRAGMA table_info(editorial_users)")
+      .all();
+    const existingColumns = userColumns.results as Array<{ name: string }>;
+    if (
+      process.env.NODE_ENV !== "production" &&
+      !existingColumns.some((column) => column.name === "password_hash")
+    ) {
+      await env.DB
+        .prepare("ALTER TABLE editorial_users ADD COLUMN password_hash TEXT")
+        .run();
+    }
 
     await env.DB.prepare(
       `INSERT OR IGNORE INTO editorial_users (email, display_name, role, active) VALUES (?, ?, ?, 1)`

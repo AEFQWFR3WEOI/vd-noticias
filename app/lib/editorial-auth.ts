@@ -2,19 +2,14 @@ import { and, eq } from "drizzle-orm";
 import { getDbReady } from "../../db";
 import { editorialUsers } from "../../db/schema";
 import {
-  getChatGPTUser,
+  getSessionUser,
   isLocalEditorialIdentity,
-} from "../chatgpt-auth";
+} from "../session-auth";
 
 export type EditorialRole = "administrator" | "editor" | "journalist" | "commercial";
 
-async function configuredOwnerEmail() {
-  const { env } = await import("cloudflare:workers");
-  return String((env as unknown as { EDITORIAL_OWNER_EMAIL?: string }).EDITORIAL_OWNER_EMAIL ?? "").trim().toLowerCase();
-}
-
 export async function getEditorialUser() {
-  const identity = await getChatGPTUser();
+  const identity = await getSessionUser();
   if (!identity) return null;
 
   const db = await getDbReady();
@@ -52,22 +47,7 @@ export async function getEditorialUser() {
     return created[0] ?? null;
   }
 
-  // Only the explicitly configured owner can bootstrap an empty newsroom.
-  const anyUser = await db.select({ id: editorialUsers.id }).from(editorialUsers).limit(1);
-  if (anyUser.length > 0) return null;
-
-  const ownerEmail = await configuredOwnerEmail();
-  if (!ownerEmail || identity.email.trim().toLowerCase() !== ownerEmail) return null;
-
-  const created = await db
-    .insert(editorialUsers)
-    .values({
-      email: identity.email,
-      displayName: identity.displayName,
-      role: "administrator",
-    })
-    .returning();
-  return created[0] ?? null;
+  return null;
 }
 
 export function canPublish(role: EditorialRole) {
