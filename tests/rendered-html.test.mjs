@@ -27,6 +27,6 @@ test("renders VD Noticias branding", async () => {
     /^text\/html\b/i,
   );
   const html = await response.text();
-  assert.match(html, /href=["']\/favicon\.svg["']/i);
+  assert.match(html, /href=["']\/vd-favicon\.svg["']/i);
   assert.match(html, /VD Noticias/i);
 });
