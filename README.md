@@ -1,9 +1,9 @@
 # VD Noticias | Visión Dominicana TV
 
-Proyecto original del periódico digital VD Noticias. Incluye portada, secciones,
-artículos, buscador, programación, canal en vivo 24/7, pódcasts, sala de
-redacción, biblioteca multimedia, equipo, publicidad, boletín, base de datos D1
-y almacenamiento R2.
+Proyecto independiente del periódico digital VD Noticias. Incluye portada,
+secciones, artículos, buscador, programación, canal en vivo 24/7, pódcasts,
+sala de redacción, biblioteca multimedia, equipo, publicidad, boletín, base de
+datos D1 y almacenamiento R2.
 
 ## Abrirlo en Windows
 
@@ -23,17 +23,10 @@ la carpeta ignorada `.wrangler/`.
 
 ## Canal en vivo 24/7
 
-La sala de redacción incorpora un centro de control para:
-
-- señal principal;
-- señal de respaldo;
-- video o canal de continuidad;
-- cambio automático y modo de mantenimiento;
-- identificación editorial de un programa realmente en directo.
-
-El sistema consulta el estado de Live Inputs de Cloudflare Stream y puede pasar
-de la entrada principal al respaldo o la continuidad. La guía de instalación y
-operación está en [`docs/TRANSMISION-24-7.md`](docs/TRANSMISION-24-7.md).
+La sala de redacción incorpora un centro de control para la señal principal,
+respaldo, continuidad, cambio automático y modo de mantenimiento. La guía de
+instalación y operación está en
+[`docs/TRANSMISION-24-7.md`](docs/TRANSMISION-24-7.md).
 
 Las claves RTMPS/SRT y los tokens de proveedores nunca se guardan en GitHub. El
 periódico almacena solamente enlaces públicos de reproducción.
@@ -45,10 +38,10 @@ una mejora, cierra el servidor con `Ctrl+C`, ejecuta `git pull` y reinicia.
 
 ## Acceso independiente a la sala de redacción
 
-Fuera de ChatGPT Sites, la ruta `/redaccion` usa correo y contraseña propios.
-Las contraseñas se guardan en D1 como hashes `scrypt`; las sesiones son tokens
+En producción, la ruta `/redaccion` usa correo y contraseña propios. Las
+contraseñas se guardan en D1 como hashes `scrypt`; las sesiones son tokens
 opacos revocables guardados en D1 y enviados en una cookie `httpOnly`,
-`SameSite=Lax` y `Secure` en producción.
+`SameSite=Lax` y `Secure`.
 
 Para crear el primer administrador en una instalación nueva:
 
@@ -59,14 +52,8 @@ Para crear el primer administrador en una instalación nueva:
 5. después del primer acceso correcto, elimina `EDITORIAL_OWNER_PASSWORD` del
    entorno y vuelve a desplegar. El hash ya permanece en D1.
 
-`EDITORIAL_OWNER_EMAIL` puede permanecer configurado. Nunca se debe guardar la
-contraseña real en GitHub. El archivo `.dev.vars.example` documenta las variables
-sin incluir secretos. En `npm run local` se conserva el administrador automático
-para no interrumpir el trabajo diario.
-
 Los demás periodistas se crean desde **Sala de redacción → Equipo**, asignando
-correo, contraseña inicial y rol. Cambiar una contraseña o revocar una cuenta
-invalida sus sesiones abiertas.
+correo, contraseña inicial y rol.
 
 ## Arquitectura
 
