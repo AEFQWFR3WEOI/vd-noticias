@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import EditorialMedia, { getMediaKind } from "../../components/EditorialMedia";
 import { PageFooter, PageHeader } from "../../components/PageChrome";
+import ListenSummary from "../../components/ListenSummary";
+import { isSpeechEnabled } from "../../lib/speech";
 import { isIndexableArticle, wordCount } from "../../lib/editorial-quality";
 import { getArticleAuthorName, getArticleWithCanonical, getPublishedArticles } from "../../lib/public-content";
 import { absoluteUrl, DEFAULT_SHARE_IMAGE, formatPublishedDate, PUBLISHER_NAME, SITE_NAME, SITE_URL } from "../../lib/site-config";
@@ -56,10 +58,11 @@ export default async function ArticlePage({ params }: Props) {
   const { paragraphs, sources } = parseArticleBody(article.body);
   const mediaKind = getMediaKind(article.heroImageUrl || "");
   const titleSize = article.title.length > 115 ? "article-title--extra-long" : article.title.length > 78 ? "article-title--long" : article.title.length > 55 ? "article-title--medium" : "";
-  const [authorName, sameCategory, latestArticles] = await Promise.all([
+  const [authorName, sameCategory, latestArticles, speechEnabled] = await Promise.all([
     getArticleAuthorName(article.authorEmail),
     getPublishedArticles(article.categorySlug, 8),
     getPublishedArticles(undefined, 16),
+    isSpeechEnabled(),
   ]);
   const recommended = [...sameCategory, ...latestArticles].filter((story, index, stories) => story.slug !== slug && stories.findIndex((candidate) => candidate.slug === story.slug) === index).slice(0, 4);
   const storyUrl = `${SITE_URL}/noticia/${article.slug}`;
@@ -96,7 +99,7 @@ export default async function ArticlePage({ params }: Props) {
         <nav className="breadcrumbs"><a href="/">Portada</a><span>›</span><a href={`/seccion/${article.categorySlug}`}>{article.categorySlug}</a><span>›</span><b>Noticia</b></nav>
         <div className="article-topic-row"><a className="article-category" href={`/seccion/${article.categorySlug}`}>{article.categorySlug.toUpperCase()}</a><a href="/terminos#metodologia">Cómo verificamos</a></div>
         <h1 className={`article-title ${titleSize}`.trim()}>{article.title}</h1>
-        <p className="article-deck">{article.summary}</p>
+        <p className="article-deck">{article.summary}</p>{speechEnabled && <ListenSummary slug={article.slug} />}
         <div className="article-byline"><div className="avatar article-avatar"><img src="/vd-noticias-logo.png" alt="VD Noticias" width="96" height="96" /></div><div><b><a href="/autores/redaccion-vd-noticias">{authorName}</a></b><span>Santo Domingo · Publicado <time dateTime={article.publishedAt || article.createdAt}>{formatPublishedDate(article.publishedAt || article.createdAt, true)}</time> · <i>{minutes} min de lectura</i></span>{article.updatedAt !== article.createdAt && <small>Actualizado <time dateTime={article.updatedAt}>{formatPublishedDate(article.updatedAt, true)}</time></small>}</div></div>
         <nav className="article-share-bar" aria-label="Compartir noticia"><a className="whatsapp" href={`https://wa.me/?text=${shareText}%20${shareUrl}`} target="_blank" rel="noreferrer" aria-label="Compartir por WhatsApp">wa</a><a className="facebook" href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noreferrer" aria-label="Compartir en Facebook">f</a><a className="x-social" href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`} target="_blank" rel="noreferrer" aria-label="Compartir en X">𝕏</a><a className="email" href={`mailto:?subject=${shareText}&body=${shareUrl}`} aria-label="Compartir por correo">✉</a><a className="telegram" href={`https://t.me/share/url?url=${shareUrl}&text=${shareText}`} target="_blank" rel="noreferrer" aria-label="Compartir por Telegram">➤</a></nav>
         {article.heroImageUrl && <figure className={`article-hero-media ${mediaKind}`}><EditorialMedia src={article.heroImageUrl} alt={article.title} controls priority /><figcaption>{mediaKind === "video" ? "Video" : mediaKind === "audio" ? "Audio" : "Imagen"} principal de la cobertura · VD Noticias.</figcaption></figure>}
