@@ -18,7 +18,7 @@ import {
   canPublish,
   getEditorialUser,
 } from "../lib/editorial-auth";
-import { CampaignManager, TeamManager } from "./AdminTools";
+import { CampaignManager, PasswordChanger, TeamManager } from "./AdminTools";
 import ArticleEditor from "./ArticleEditor";
 import BroadcastManager from "./BroadcastManager";
 import MediaLibrary from "./MediaLibrary";
@@ -134,6 +134,7 @@ async function Newsroom() {
           {canPublish(user.role) && <a href="#emision">◉ Emisión y programas</a>}
           {canManageAds(user.role) && <a href="#publicidad">◫ Publicidad</a>}
           {user.role === "administrator" && <a href="#equipo">◎ Equipo</a>}
+          {!isLocalEditorialIdentity(identity.email) && <a href="#mi-cuenta">⚿ Mi cuenta</a>}
         </nav>
         <div className="sidebar-bottom">
           <small>Sesión de</small>
@@ -367,6 +368,18 @@ async function Newsroom() {
               <p>Periodistas, editores y comerciales</p>
             </div>
             <TeamManager />
+          </section>
+        )}
+        {!isLocalEditorialIdentity(identity.email) && (
+          <section className="content-panel" id="mi-cuenta">
+            <div className="panel-heading">
+              <div>
+                <span>SEGURIDAD</span>
+                <h2>Mi cuenta</h2>
+              </div>
+              <p>Cambia la contraseña que te dio el administrador</p>
+            </div>
+            <PasswordChanger />
           </section>
         )}
       </section>
