@@ -3189,3 +3189,20 @@ iframe { max-width: 100%; }
   .pulso-body { grid-template-columns: 1fr; }
   .pulso-dot text { font-size: 16px; }
 }
+
+/* ===== Lectura más profesional ===== */
+/* Encabezado: se oculta la franja del logo al bajar y reaparece al subir. */
+.pro-header { transition: transform .25s ease; will-change: transform; }
+html.header-hidden .pro-header { transform: translateY(calc(-1 * var(--masthead-h, 0px))); }
+@media (prefers-reduced-motion: reduce) { .pro-header { transition: none; } }
+
+/* Foto principal de la noticia: del ancho del texto, proporción 16:9,
+   sin franjas negras a los lados. */
+.pro-article .article-hero-media.image { max-width: 860px; margin-left: 0; margin-right: auto; background: transparent; }
+.pro-article .article-hero-media.image > .editorial-media-element {
+  width: 100%; height: auto; aspect-ratio: 16 / 9; max-height: none;
+  object-fit: cover; background: #e9edf3;
+}
+@media (max-width: 900px) {
+  .pro-article .article-hero-media.image { max-width: none; }
+}

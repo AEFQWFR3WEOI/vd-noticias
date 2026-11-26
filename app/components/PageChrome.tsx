@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-img-element */
 import SectionsMenu, { type MenuEntry } from "./SectionsMenu";
+import HeaderScroll from "./HeaderScroll";
 
 const sections = [
   "Nacionales",
@@ -94,6 +95,7 @@ export function PageHeader({ active, showAd = false }: HeaderProps) {
         </aside>
       )}
 
+      <HeaderScroll />
       <header className="site-header pro-header">
         <div className="container pro-masthead">
           <div className="masthead-left">
