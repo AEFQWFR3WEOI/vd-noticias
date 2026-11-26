@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-img-element */
+import SectionsMenu, { type MenuEntry } from "./SectionsMenu";
+
 const sections = [
   "Nacionales",
   "Política",
@@ -34,15 +36,21 @@ const sectionHref = (section: string) => {
   return `/seccion/${sectionSlug(section)}`;
 };
 
-const menuGroups = [
-  { title: "Actualidad", links: ["Nacionales", "Ciudad", "Educación", "Salud", "Justicia", "Política", "Sucesos", "A Fondo", "Reportajes"] },
-  { title: "Economía", links: ["Finanzas", "Turismo", "Agro", "Empleo", "Negocios", "Energía", "Consumo", "Vivienda"] },
-  { title: "Revista", links: ["Música", "Cine", "Cultura", "Farándula", "Moda", "Belleza", "Buena Vida", "Sociales"] },
-  { title: "Deportes", links: ["Baloncesto", "Fútbol", "Béisbol", "Motor", "Golf", "Ciclismo", "Tenis", "Olimpismo"] },
-  { title: "Opinión", links: ["Editorial", "En Desarrollo", "Columnistas", "Ágora", "En Directo", "El Espía"] },
-  { title: "Mundo", links: ["Estados Unidos", "América Latina", "Haití", "Europa", "Medio Oriente", "Asia", "África", "Caribe"] },
-  { title: "Planeta", links: ["Medioambiente", "Ciencia", "Clima", "Tecnología", "Historia", "Cambio Climático"] },
-  { title: "VD Media", links: ["En vivo", "Programación", "Videos", "Pódcasts"] },
+const sub = (...labels: string[]) => labels.map((label) => ({ label, href: sectionHref(label) }));
+
+// Menú lateral (botón «Menú»): mismo orden y estilo de lista con «+».
+const drawerEntries: MenuEntry[] = [
+  { title: "Última Hora", href: "/seccion/ultimas" },
+  { title: "Actualidad", href: "/seccion/nacionales", links: sub("Nacionales", "Ciudad", "Educación", "Salud", "Justicia", "Sucesos", "A Fondo", "Reportajes") },
+  { title: "Política", href: "/seccion/politica", links: sub("Gobierno", "Congreso", "Partidos", "Elecciones") },
+  { title: "Mundo", href: "/seccion/mundo", links: sub("Estados Unidos", "América Latina", "Haití", "Europa", "Medio Oriente", "Asia", "África", "Caribe") },
+  { title: "Economía", href: "/seccion/economia", links: sub("Finanzas", "Turismo", "Agro", "Empleo", "Negocios", "Energía", "Consumo", "Vivienda") },
+  { title: "Revista", href: "/seccion/revista", links: sub("Música", "Cine", "Cultura", "Farándula", "Moda", "Belleza", "Buena Vida", "Sociales") },
+  { title: "Deportes", href: "/seccion/deportes", links: sub("Béisbol", "Baloncesto", "Fútbol", "Motor", "Golf", "Ciclismo", "Tenis", "Olimpismo") },
+  { title: "Opinión", href: "/seccion/opinion", links: sub("Editorial", "En Desarrollo", "Columnistas", "Ágora", "En Directo", "El Espía") },
+  { title: "Planeta", href: "/seccion/planeta", links: sub("Medioambiente", "Ciencia", "Clima", "Tecnología", "Historia", "Cambio Climático") },
+  { title: "Videos", href: "/seccion/videos", links: sub("En vivo", "Programación", "Videos") },
+  { title: "Pódcasts", href: "/programacion#programas" },
 ];
 
 const footerGroups = [
@@ -89,32 +97,7 @@ export function PageHeader({ active, showAd = false }: HeaderProps) {
       <header className="site-header pro-header">
         <div className="container pro-masthead">
           <div className="masthead-left">
-            <details className="mega-menu">
-              <summary aria-label="Abrir menú de secciones">
-                <span className="hamburger" aria-hidden="true"><i /><i /><i /></span>
-                <b>Menú</b>
-              </summary>
-              <div className="mega-panel">
-                <div className="container mega-panel-inner">
-                  <div className="mega-intro">
-                    <span>EXPLORA VD NOTICIAS</span>
-                    <h2>Todo lo que importa, en un solo lugar.</h2>
-                    <p>Noticias, análisis, opinión, multimedia y servicios para entender el país.</p>
-                  </div>
-                  {menuGroups.map((group) => (
-                    <nav key={group.title} aria-label={group.title}>
-                      <h3>{group.title}</h3>
-                      {group.links.map((link) => <a href={sectionHref(link)} key={link}>{link}</a>)}
-                    </nav>
-                  ))}
-                  <div className="mega-service">
-                    <span>VD EN VIVO</span>
-                    <b>La señal de Visión Dominicana TV</b>
-                    <a href="/programacion#en-vivo">Ver transmisión →</a>
-                  </div>
-                </div>
-              </div>
-            </details>
+            <SectionsMenu entries={drawerEntries} />
             <span className="edition-label">Edición RD</span>
           </div>
 
