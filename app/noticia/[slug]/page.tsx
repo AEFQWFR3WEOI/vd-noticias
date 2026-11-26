@@ -125,7 +125,7 @@ export default async function ArticlePage({ params }: Props) {
             </footer>
           </div>
           <aside className="most-read vd-latest" aria-labelledby="vd-latest-title">
-            <header><h2 id="vd-latest-title"><i aria-hidden="true" />Lo último</h2><a href="/seccion/ultimas">Ver todo →</a></header>
+            <header><h2 id="vd-latest-title"><i aria-hidden="true" />Lo último</h2><a href="/seccion/ultimas">Ver todo</a></header>
             {(() => {
               const items = latestArticles.filter((item) => item.slug !== slug).slice(0, 5);
               const [first, ...rest] = items;
@@ -143,9 +143,9 @@ export default async function ArticlePage({ params }: Props) {
             })()}
           </aside>
         </div>
-        <div className="article-end"><div className="topic-tags" id="temas"><span>TEMAS</span><a href={`/seccion/${article.categorySlug}`}>{article.categorySlug}</a><a href="/seccion/nacionales">República Dominicana</a></div><aside className="author-card"><div className="avatar">VD</div><div><span>SOBRE EL AUTOR</span><b>{authorName}</b><p>Redacción responsable de verificar, contextualizar y actualizar la cobertura de VD Noticias.</p></div><a href="/autores/redaccion-vd-noticias">Ver perfil editorial →</a></aside></div>
+        <div className="article-end"><div className="topic-tags" id="temas"><span>TEMAS</span><a href={`/seccion/${article.categorySlug}`}>{article.categorySlug}</a><a href="/seccion/nacionales">República Dominicana</a></div><aside className="author-card"><div className="avatar">VD</div><div><span>SOBRE EL AUTOR</span><b>{authorName}</b><p>Redacción responsable de verificar, contextualizar y actualizar la cobertura de VD Noticias.</p></div><a href="/autores/redaccion-vd-noticias">Ver perfil editorial</a></aside></div>
       </article>
-      {recommended.length > 0 && <section className="container article-recommendations" aria-labelledby="recommendations-heading"><div className="article-recommendations-title"><h2 id="recommendations-heading">Noticias que te pueden interesar</h2><a href={`/seccion/${article.categorySlug}`}>Ver la sección →</a></div><div className="article-recommendations-grid">{recommended.map((story) => <article key={story.slug}><a href={`/noticia/${story.slug}`}><EditorialMedia src={story.heroImageUrl || "/vd-noticias-logo.png"} alt={story.title} /><span>{story.categorySlug.toUpperCase()}</span><h3>{story.title}</h3><p>{story.summary}</p></a></article>)}</div></section>}
+      {recommended.length > 0 && <section className="container article-recommendations" aria-labelledby="recommendations-heading"><div className="article-recommendations-title"><h2 id="recommendations-heading">Noticias que te pueden interesar</h2><a href={`/seccion/${article.categorySlug}`}>Ver la sección</a></div><div className="article-recommendations-grid">{recommended.map((story) => <article key={story.slug}><a href={`/noticia/${story.slug}`}><EditorialMedia src={story.heroImageUrl || "/vd-noticias-logo.png"} alt={story.title} /><span>{story.categorySlug.toUpperCase()}</span><h3>{story.title}</h3><p>{story.summary}</p></a></article>)}</div></section>}
       <PageFooter />
     </main>
   );

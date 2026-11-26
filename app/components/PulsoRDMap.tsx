@@ -125,9 +125,9 @@ export default function PulsoRDMap({ data }: Props) {
               ))}
             </ol>
           ) : (
-            <p className="pulso-empty">Todavía no hay noticias recientes de {current.name}. ¿Pasa algo en tu provincia? <a href="/contacto">Cuéntanos →</a></p>
+            <p className="pulso-empty">Todavía no hay noticias recientes de {current.name}. ¿Pasa algo en tu provincia? <a href="/contacto">Cuéntanos</a></p>
           )}
-          {stories.length > 5 && <a className="pulso-more" href={`/buscar?q=${encodeURIComponent(current.name)}`}>Ver las {stories.length} noticias →</a>}
+          {stories.length > 5 && <a className="pulso-more" href={`/buscar?q=${encodeURIComponent(current.name)}`}>Ver las {stories.length} noticias</a>}
           <div className="pulso-top">
             <b>Más activas</b>
             {ranked.filter((province) => province.count > 0).slice(0, 4).map((province) => (

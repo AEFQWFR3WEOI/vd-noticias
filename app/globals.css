@@ -2728,7 +2728,7 @@ iframe { max-width: 100%; }
   .sports-live-card { order: -1; }
   .medal-table-wrap { position: relative; }
   .medal-table-wrap::after {
-    content: "Desliza para ver el medallero completo →";
+    content: "Desliza para ver el medallero completo";
     display: block;
     position: sticky;
     left: 0;

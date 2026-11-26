@@ -59,7 +59,7 @@ function EditorialSection({ slug, articles }: { slug: string; articles: PublicAr
   const label = sectionLabels[slug] || slug;
   return (
     <section className="deep-editorial-section" id={slug}>
-      <div className="deep-section-title"><h2>{label}</h2><a href={`/seccion/${slug}`}>Ver toda la sección →</a></div>
+      <div className="deep-section-title"><h2>{label}</h2><a href={`/seccion/${slug}`}>Ver toda la sección</a></div>
       <div className="deep-lead-grid real-news-grid">
         <article className="deep-main-story">
           <a href={`/noticia/${lead.slug}`}><EditorialMedia src={articleImage(lead)} alt={lead.title} /><span>{label.toUpperCase()}</span><h3>{lead.title}</h3></a>
@@ -129,7 +129,7 @@ export default async function Home() {
             <div className="front-secondary">
               {secondary.slice(0, 3).map((article) => <StoryCard article={article} key={article.slug} />)}
             </div>
-            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias →</a></aside>
+            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias</a></aside>
           </section>
         ) : <section className="empty-publication"><span>VD NOTICIAS</span><h1>La próxima edición está en preparación</h1><p>La redacción publicará aquí las informaciones verificadas.</p></section>}
 
@@ -142,14 +142,14 @@ export default async function Home() {
 
       <div className="container front-page-after-media">
         {briefing.length > 0 && <div className="smart-briefing-shell"><SmartBriefing articles={briefing} /></div>}
-        <aside className="pro-inline-ad" aria-label="Publicidad horizontal"><span>PUBLICIDAD · SUPER BANNER 970 × 90</span><div><b>Su empresa frente a una audiencia informada</b><a href="/publicidad">Solicitar propuesta comercial →</a></div></aside>
+        <aside className="pro-inline-ad" aria-label="Publicidad horizontal"><span>PUBLICIDAD · SUPER BANNER 970 × 90</span><div><b>Su empresa frente a una audiencia informada</b><a href="/publicidad">Solicitar propuesta comercial</a></div></aside>
       </div>
 
       <div className="container complete-newspaper">
         {sectionOrder.map((slug) => <EditorialSection slug={slug} articles={sections.get(slug) || []} key={slug} />)}
       </div>
 
-      <section className="services-section"><div className="container services-grid"><article><span>01</span><div><b>Resumen inteligente</b><p>Una portada personalizada con noticias realmente publicadas.</p><a href="#smart-briefing-title">Personalizar →</a></div></article><article><span>02</span><div><b>Fuentes visibles</b><p>La documentación aparece junto a cada cobertura.</p><a href="/terminos#fuentes">Conocer el estándar →</a></div></article><article><span>03</span><div><b>Archivo abierto</b><p>Busca personas, lugares y temas en toda la edición.</p><a href="/buscar">Buscar →</a></div></article><article><span>04</span><div><b>RSS para lectores y sistemas</b><p>Un canal estructurado para seguir las publicaciones.</p><a href="/rss.xml">Abrir RSS →</a></div></article></div></section>
+      <section className="services-section"><div className="container services-grid"><article><span>01</span><div><b>Resumen inteligente</b><p>Una portada personalizada con noticias realmente publicadas.</p><a href="#smart-briefing-title">Personalizar</a></div></article><article><span>02</span><div><b>Fuentes visibles</b><p>La documentación aparece junto a cada cobertura.</p><a href="/terminos#fuentes">Conocer el estándar</a></div></article><article><span>03</span><div><b>Archivo abierto</b><p>Busca personas, lugares y temas en toda la edición.</p><a href="/buscar">Buscar</a></div></article><article><span>04</span><div><b>RSS para lectores y sistemas</b><p>Un canal estructurado para seguir las publicaciones.</p><a href="/rss.xml">Abrir RSS</a></div></article></div></section>
 
       <section className="newsletter pro-newsletter" id="boletin"><div className="container newsletter-inner"><div><span>EL RESUMEN VD</span><h2>Lo esencial, directo a tu correo</h2><p>Noticias verificadas, contexto y las claves del día. Puedes darte de baja cuando quieras.</p></div><NewsletterForm /></div></section>
       <PageFooter />

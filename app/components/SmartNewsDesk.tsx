@@ -47,7 +47,7 @@ export function SmartBriefing({ articles }: { articles: BriefingArticle[] }) {
         {visible.map((article, index) => (
           <article key={article.slug}><b>{String(index + 1).padStart(2, "0")}</b><div><span>{article.category.toUpperCase()}</span><a href={`/noticia/${article.slug}`}>{article.title}</a><small>{article.summary}</small></div></article>
         ))}
-        <a className="briefing-action" href="/seccion/ultimas">Abrir resumen completo →</a>
+        <a className="briefing-action" href="/seccion/ultimas">Abrir resumen completo</a>
       </div>
     </section>
   );

@@ -55,7 +55,7 @@ export default function LatestNewsStage({ articles }: { articles: LatestStageArt
     <section className="latest-stage-section" aria-labelledby="latest-stage-title">
       <header className="latest-stage-heading">
         <div><span>EN DESARROLLO</span><h2 id="latest-stage-title">Últimas noticias</h2></div>
-        <div><small>{String(current + 1).padStart(2, "0")} / {String(articles.length).padStart(2, "0")}</small><a href="/seccion/ultimas">Ver todas →</a></div>
+        <div><small>{String(current + 1).padStart(2, "0")} / {String(articles.length).padStart(2, "0")}</small><a href="/seccion/ultimas">Ver todas</a></div>
       </header>
 
       <div
@@ -86,7 +86,7 @@ export default function LatestNewsStage({ articles }: { articles: LatestStageArt
           <div className="latest-stage-meta"><a href={`/seccion/${active.categorySlug}`}>{active.category}</a><time dateTime={active.publishedAt || undefined}>{active.time}</time><span>{active.readingMinutes} min de lectura</span></div>
           <h3><a href={`/noticia/${active.slug}`}>{active.title}</a></h3>
           <p>{active.summary}</p>
-          <a className="latest-stage-cta" href={`/noticia/${active.slug}`}>Leer noticia completa <b>→</b></a>
+          <a className="latest-stage-cta" href={`/noticia/${active.slug}`}>Leer noticia completa</a>
         </article>
         <div className="latest-stage-controls" aria-label="Controles del carrusel">
           <button type="button" onClick={() => goTo(current - 1)} aria-label="Noticia anterior">←</button>
