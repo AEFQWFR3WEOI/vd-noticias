@@ -49,6 +49,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+const SECTION_LABELS: Record<string, string> = { nacionales: "Nacionales", politica: "Política", economia: "Economía", mundo: "Mundo", deportes: "Deportes", entretenimiento: "Entretenimiento", revista: "Revista", tecnologia: "Tecnología", salud: "Salud", educacion: "Educación", turismo: "Turismo", cultura: "Cultura", opinion: "Opinión", planeta: "Planeta", videos: "Videos" };
+const sectionLabel = (slug: string) => SECTION_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
+
+function timeAgo(value?: string | null) {
+  if (!value) return "Reciente";
+  const date = new Date(value);
+  const minutes = Math.round((Date.now() - date.getTime()) / 60000);
+  if (Number.isNaN(minutes)) return "Reciente";
+  if (minutes < 60) return `Hace ${Math.max(1, minutes)} min`;
+  if (minutes < 24 * 60) return `Hace ${Math.round(minutes / 60)} h`;
+  return new Intl.DateTimeFormat("es-DO", { day: "numeric", month: "short", timeZone: "America/Santo_Domingo" }).format(date).replace(".", "");
+}
+
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
   const result = await getArticleWithCanonical(slug);
@@ -111,7 +124,24 @@ export default async function ArticlePage({ params }: Props) {
               <p className="article-endnote-meta"><span>{authorName}</span><span aria-hidden="true">·</span><a href="/terminos">Cómo trabajamos</a><span aria-hidden="true">·</span><a href="/contacto?asunto=correccion">¿Viste un error? Avísanos</a></p>
             </footer>
           </div>
-          <aside className="most-read article-visual-latest"><span>ÚLTIMAS NOTICIAS</span>{latestArticles.filter((item) => item.slug !== slug).slice(0, 5).map((item) => <article key={item.slug}><a href={`/noticia/${item.slug}`}><EditorialMedia src={item.heroImageUrl || "/vd-noticias-logo.png"} alt={item.title} /><div><small>{item.categorySlug.toUpperCase()}</small><h3>{item.title}</h3><p>{item.summary}</p></div></a></article>)}</aside>
+          <aside className="most-read vd-latest" aria-labelledby="vd-latest-title">
+            <header><h2 id="vd-latest-title"><i aria-hidden="true" />Lo último</h2><a href="/seccion/ultimas">Ver todo →</a></header>
+            {(() => {
+              const items = latestArticles.filter((item) => item.slug !== slug).slice(0, 5);
+              const [first, ...rest] = items;
+              if (!first) return null;
+              return <>
+                <a className="vd-latest-feature" href={`/noticia/${first.slug}`}>
+                  <EditorialMedia src={first.heroImageUrl || "/vd-noticias-logo.png"} alt={first.title} />
+                  <span className="vd-latest-shade" aria-hidden="true" />
+                  <span className="vd-latest-feature-text"><em>{sectionLabel(first.categorySlug)}</em><b>{first.title}</b><time>{timeAgo(first.publishedAt)}</time></span>
+                </a>
+                <ol className="vd-latest-list">
+                  {rest.map((item) => <li key={item.slug}><a href={`/noticia/${item.slug}`}><span className="vd-latest-copy"><time>{timeAgo(item.publishedAt)} · {sectionLabel(item.categorySlug)}</time><b>{item.title}</b></span><EditorialMedia src={item.heroImageUrl || "/vd-noticias-logo.png"} alt="" /></a></li>)}
+                </ol>
+              </>;
+            })()}
+          </aside>
         </div>
         <div className="article-end"><div className="topic-tags" id="temas"><span>TEMAS</span><a href={`/seccion/${article.categorySlug}`}>{article.categorySlug}</a><a href="/seccion/nacionales">República Dominicana</a></div><aside className="author-card"><div className="avatar">VD</div><div><span>SOBRE EL AUTOR</span><b>{authorName}</b><p>Redacción responsable de verificar, contextualizar y actualizar la cobertura de VD Noticias.</p></div><a href="/autores/redaccion-vd-noticias">Ver perfil editorial →</a></aside></div>
       </article>
