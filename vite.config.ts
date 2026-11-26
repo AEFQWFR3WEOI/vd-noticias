@@ -1,27 +1,6 @@
 import vinext from "vinext";
 import { defineConfig } from "vite";
 
-const SITE_CREATOR_DATABASE_ID =
-  "1d5cbe6a-a294-473a-a0a4-305725fc0623";
-
-const localBindingConfig = {
-  main: "./worker/index.ts",
-  compatibility_flags: ["nodejs_compat"],
-  d1_databases: [
-    {
-      binding: "DB",
-      database_name: "site-creator-d1",
-      database_id: SITE_CREATOR_DATABASE_ID,
-    },
-  ],
-  r2_buckets: [
-    {
-      binding: "BUCKET",
-      bucket_name: "site-creator-r2",
-    },
-  ],
-};
-
 export default defineConfig(async () => {
   // Keep Wrangler and Miniflare state project-local. These are non-secret tool
   // settings; application environment belongs in ignored `.env*` files.
@@ -49,7 +28,6 @@ export default defineConfig(async () => {
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
         inspectorPort: false,
-        config: localBindingConfig,
       }),
     ],
   };

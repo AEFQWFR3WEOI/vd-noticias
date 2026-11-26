@@ -13,6 +13,13 @@ import {
   safeRelativeReturnPath,
   sessionCookieHeader,
 } from "../../../session-auth";
+import {
+  clearLoginFailures,
+  clientIpFromRequest,
+  isLoginBlocked,
+  recordLoginFailure,
+  tooManyAttemptsResponse,
+} from "../../../lib/login-rate-limit";
 
 type LoginBody = {
   email?: string;
@@ -51,6 +58,11 @@ export async function POST(request: Request) {
       { error: "Correo o contraseña incorrectos" },
       { status: 401 },
     );
+  }
+
+  const ipAddress = clientIpFromRequest(request);
+  if (await isLoginBlocked(email, ipAddress)) {
+    return tooManyAttemptsResponse();
   }
 
   const db = await getDbReady();
@@ -133,12 +145,14 @@ export async function POST(request: Request) {
     !user.passwordHash ||
     !(await verifyPassword(password, user.passwordHash))
   ) {
+    await recordLoginFailure(email, ipAddress);
     return Response.json(
       { error: "Correo o contraseña incorrectos" },
       { status: 401 },
     );
   }
 
+  await clearLoginFailures(email);
   const token = await createEditorialSession(user.id);
   await db.insert(auditLog).values({
     actorEmail: user.email,
