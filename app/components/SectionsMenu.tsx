@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 export type MenuEntry = {
   title: string;
@@ -14,6 +15,12 @@ type Props = { entries: MenuEntry[] };
 export default function SectionsMenu({ entries }: Props) {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // El panel se monta directamente en <body> para que ninguna barra del
+  // encabezado quede por encima de él.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
@@ -43,6 +50,7 @@ export default function SectionsMenu({ entries }: Props) {
         <b>Menú</b>
       </button>
 
+      {mounted && createPortal(<>
       <div className={`sections-backdrop${open ? " is-open" : ""}`} onClick={() => setOpen(false)} aria-hidden="true" />
 
       <aside
@@ -92,6 +100,7 @@ export default function SectionsMenu({ entries }: Props) {
         </nav>
         <a className="sections-live" href="/programacion#en-vivo" onClick={() => setOpen(false)}><i /> Ver VD en vivo</a>
       </aside>
+      </>, document.body)}
     </div>
   );
 }
