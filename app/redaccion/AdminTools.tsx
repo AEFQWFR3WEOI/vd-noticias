@@ -27,7 +27,7 @@ export function TeamManager() {
     event.preventDefault(); const form = event.currentTarget; const values = Object.fromEntries(new FormData(form).entries());
     const response = await fetch("/api/team", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(values) });
     const result = await response.json() as { member?: { email: string }; error?: string };
-    setMessage(response.ok ? `${result.member?.email} ya puede iniciar sesión` : result.error ?? "No se pudo guardar");
+    setMessage(response.ok ? `${result.member?.email} ya puede iniciar sesión. Pídele que cambie la contraseña en «Mi cuenta» al entrar.` : result.error ?? "No se pudo guardar");
     if (response.ok) { form.reset(); await loadMembers(); }
   }
 
@@ -50,4 +50,32 @@ export function CampaignManager() {
     setMessage(response.ok ? `Propuesta publicitaria #${result.campaign?.id} registrada` : result.error ?? "No se pudo guardar"); if (response.ok) form.reset();
   }
   return <form className="mini-admin-form campaign-form" onSubmit={submit}><label>Cliente<input name="clientName" required /></label><label>Correo<input name="contactEmail" type="email" required /></label><label>Posición<select name="placementCode"><option value="homepage-top">Impacto principal 970 × 90</option><option value="homepage-middle">Portada premium 728 × 90</option><option value="article-inline">Dentro de noticia 728 × 90</option><option value="sidebar-300x600">Robapágina 300 × 600</option><option value="branded-content">Especial de marca</option></select></label><label>Enlace de destino<input name="destinationUrl" type="url" placeholder="https://" /></label><label>Inicio<input name="startsAt" type="date" required /></label><label>Fin<input name="endsAt" type="date" required /></label><button>Crear propuesta</button>{message && <p>{message}</p>}</form>;
+}
+
+export function PasswordChanger() {
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = Object.fromEntries(new FormData(form).entries());
+    if (values.newPassword !== values.confirmPassword) {
+      setMessage("Las contraseñas nuevas no coinciden");
+      return;
+    }
+    setBusy(true);
+    try {
+      const response = await fetch("/api/auth/password", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(values) });
+      const result = await response.json() as { ok?: boolean; error?: string };
+      setMessage(response.ok ? "Contraseña actualizada. Se cerraron tus sesiones en otros dispositivos." : result.error ?? "No se pudo cambiar la contraseña");
+      if (response.ok) form.reset();
+    } catch {
+      setMessage("No se pudo conectar. Inténtalo de nuevo.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return <form className="mini-admin-form" onSubmit={submit}><label>Contraseña actual<input name="currentPassword" type="password" required maxLength={128} autoComplete="current-password" /></label><label>Contraseña nueva<input name="newPassword" type="password" required minLength={12} maxLength={128} autoComplete="new-password" placeholder="Mínimo 12 caracteres" /></label><label>Repite la contraseña nueva<input name="confirmPassword" type="password" required minLength={12} maxLength={128} autoComplete="new-password" /></label><button disabled={busy}>{busy ? "Guardando…" : "Cambiar contraseña"}</button>{message && <p>{message}</p>}</form>;
 }
