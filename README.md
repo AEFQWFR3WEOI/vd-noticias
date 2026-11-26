@@ -36,6 +36,12 @@ periódico almacena solamente enlaces públicos de reproducción.
 Antes de comenzar usa `git pull` y después `npm run local`. Cuando se publique
 una mejora, cierra el servidor con `Ctrl+C`, ejecuta `git pull` y reinicia.
 
+## Publicar en internet
+
+Cada cambio unido a `main` se publica solo en Cloudflare. La guía (variables,
+primer administrador y dominio propio) está en
+[`docs/PUBLICAR-EN-CLOUDFLARE.md`](docs/PUBLICAR-EN-CLOUDFLARE.md).
+
 ## Acceso independiente a la sala de redacción
 
 En producción, la ruta `/redaccion` usa correo y contraseña propios. Las
@@ -70,6 +76,7 @@ correo, contraseña inicial y rol.
 - `npm run lint`: verifica la calidad del código.
 - `npm run build`: construye y valida producción.
 - `npm run db:generate`: genera migraciones de base de datos.
+- `npm run deploy`: construye y publica en Cloudflare.
 
 Los datos creados en producción viven en D1/R2 y no se versionan en GitHub. Para
 trasladarlos se debe realizar una exportación separada.

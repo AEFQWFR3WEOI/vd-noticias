@@ -195,3 +195,19 @@ export const auditLog = sqliteTable("audit_log", {
   detail: text("detail").notNull().default(""),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+// Intentos fallidos de inicio de sesión. Se usan para bloquear temporalmente
+// ataques de fuerza bruta contra /api/auth/login (por correo y por IP).
+export const loginAttempts = sqliteTable(
+  "login_attempts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    email: text("email").notNull(),
+    ipAddress: text("ip_address").notNull(),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [
+    index("login_attempts_email_idx").on(table.email, table.createdAt),
+    index("login_attempts_ip_idx").on(table.ipAddress, table.createdAt),
+  ],
+);

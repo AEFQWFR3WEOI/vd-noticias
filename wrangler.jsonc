@@ -1,0 +1,36 @@
+// Configuración de Cloudflare para VD Noticias.
+// Usa la base de datos y el almacenamiento que YA existen en la cuenta
+// (site-creator-d1 y site-creator-r2), así no se pierde ningún dato.
+// Guía: docs/PUBLICAR-EN-CLOUDFLARE.md
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vd-noticias",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Las variables (EDITORIAL_OWNER_EMAIL, NEXT_PUBLIC_SITE_URL) y los secretos
+  // se administran en el panel de Cloudflare. Esto evita que un despliegue
+  // los borre.
+  "keep_vars": true,
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "site-creator-d1",
+      "database_id": "1d5cbe6a-a294-473a-a0a4-305725fc0623",
+      "migrations_dir": "drizzle"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "BUCKET",
+      "bucket_name": "site-creator-r2"
+    }
+  ],
+
+  // Optimización de imágenes (/_vinext/image).
+  "images": { "binding": "IMAGES" }
+}

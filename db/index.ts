@@ -5,7 +5,12 @@ import { currentEditionArticles } from "./current-edition";
 let initialization: Promise<void> | null = null;
 
 const schemaStatements = [
-  `CREATE TABLE IF NOT EXISTS editorial_users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, role TEXT DEFAULT 'journalist' NOT NULL, active INTEGER DEFAULT 1 NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS editorial_users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, role TEXT DEFAULT 'journalist' NOT NULL, password_hash TEXT, active INTEGER DEFAULT 1 NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS editorial_sessions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, token_hash TEXT NOT NULL UNIQUE, expires_at TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, last_seen_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS login_attempts (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email TEXT NOT NULL, ip_address TEXT NOT NULL, created_at TEXT NOT NULL)`,
+  `CREATE INDEX IF NOT EXISTS login_attempts_email_idx ON login_attempts (email, created_at)`,
+  `CREATE INDEX IF NOT EXISTS login_attempts_ip_idx ON login_attempts (ip_address, created_at)`,
+  `CREATE TABLE IF NOT EXISTS broadcast_channels (id INTEGER PRIMARY KEY NOT NULL, enabled INTEGER DEFAULT 1 NOT NULL, always_on INTEGER DEFAULT 1 NOT NULL, is_live INTEGER DEFAULT 0 NOT NULL, source_mode TEXT DEFAULT 'automatic' NOT NULL, provider TEXT DEFAULT 'cloudflare' NOT NULL, primary_url TEXT DEFAULT '' NOT NULL, backup_url TEXT DEFAULT '' NOT NULL, continuity_url TEXT DEFAULT '' NOT NULL, title TEXT DEFAULT 'Visión Dominicana TV en vivo' NOT NULL, description TEXT DEFAULT 'Noticias, entrevistas y cobertura especial desde República Dominicana.' NOT NULL, poster_url TEXT DEFAULT '' NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, description TEXT DEFAULT '' NOT NULL, position INTEGER DEFAULT 0 NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, title TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, summary TEXT DEFAULT '' NOT NULL, body TEXT DEFAULT '' NOT NULL, category_slug TEXT NOT NULL, author_email TEXT NOT NULL, hero_image_url TEXT, status TEXT DEFAULT 'draft' NOT NULL, is_breaking INTEGER DEFAULT 0 NOT NULL, is_featured INTEGER DEFAULT 0 NOT NULL, seo_title TEXT, seo_description TEXT, published_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS article_revisions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, article_id INTEGER NOT NULL, editor_email TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL, status TEXT NOT NULL, note TEXT DEFAULT '' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
@@ -18,6 +23,32 @@ const schemaStatements = [
   `CREATE TABLE IF NOT EXISTS newsletter_subscribers (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, email TEXT NOT NULL UNIQUE, active INTEGER DEFAULT 1 NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS contact_messages (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, email TEXT NOT NULL, topic TEXT DEFAULT 'editorial' NOT NULL, message TEXT NOT NULL, status TEXT DEFAULT 'new' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS audit_log (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, actor_email TEXT NOT NULL, action TEXT NOT NULL, entity_type TEXT NOT NULL, entity_id TEXT NOT NULL, detail TEXT DEFAULT '' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+];
+
+const defaultCategories: Array<[string, string, string]> = [
+  ["Nacionales", "nacionales", "Lo que pasa en República Dominicana"],
+  ["Política", "politica", "Gobierno, partidos y Congreso"],
+  ["Economía", "economia", "Mercados, empleo y negocios"],
+  ["Mundo", "mundo", "Noticias internacionales"],
+  ["Deportes", "deportes", "Béisbol, baloncesto y más"],
+  ["Revista", "revista", "Historias y estilo de vida"],
+  ["Entretenimiento", "entretenimiento", "Música, cine y farándula"],
+  ["Tecnología", "tecnologia", "Innovación y vida digital"],
+  ["Salud", "salud", "Salud pública y bienestar"],
+  ["Educación", "educacion", "Escuelas, universidades y formación"],
+  ["Turismo", "turismo", "Destinos y sector turístico"],
+  ["Cultura", "cultura", "Arte, letras y tradición"],
+  ["Opinión", "opinion", "Columnas y análisis"],
+  ["Planeta", "planeta", "Medio ambiente y clima"],
+  ["Videos", "videos", "Lo mejor de Visión Dominicana TV"],
+];
+
+const defaultAdPlacements: Array<[string, string, string, string]> = [
+  ["homepage-top", "Impacto principal", "970x90", "Portada, parte superior"],
+  ["homepage-middle", "Portada premium", "728x90", "Portada, zona central"],
+  ["article-inline", "Dentro de noticia", "728x90", "Cuerpo de cada noticia"],
+  ["sidebar-300x600", "Robapágina", "300x600", "Columna lateral"],
+  ["branded-content", "Especial de marca", "Contenido", "Artículo patrocinado"],
 ];
 
 export async function getDbReady() {
@@ -45,21 +76,28 @@ export async function getDbReady() {
       )
       .run();
 
+    // Secciones, espacios publicitarios y fila del canal en vivo. Solo se
+    // insertan si faltan; nunca reemplazan lo que ya esté en la base.
+    await env.DB.batch([
+      ...defaultCategories.map(([name, slug, description], index) =>
+        env.DB.prepare(
+          `INSERT OR IGNORE INTO categories (name, slug, description, position) VALUES (?, ?, ?, ?)`
+        ).bind(name, slug, description, index + 1)
+      ),
+      ...defaultAdPlacements.map(([code, name, dimensions, location]) =>
+        env.DB.prepare(
+          `INSERT OR IGNORE INTO ad_placements (code, name, dimensions, location, base_rate, active) VALUES (?, ?, ?, ?, 0, 1)`
+        ).bind(code, name, dimensions, location)
+      ),
+      env.DB.prepare(`INSERT OR IGNORE INTO broadcast_channels (id) VALUES (1)`),
+    ]);
+
+    // Las notas de la edición inicial solo se insertan si no existen. Nunca se
+    // sobrescriben, para no borrar los cambios que hagan los editores.
     const articleInsert = `INSERT INTO articles
       (title, slug, summary, body, category_slug, author_email, hero_image_url, status, is_breaking, is_featured, seo_title, seo_description, published_at, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(slug) DO UPDATE SET
-        title = excluded.title,
-        summary = excluded.summary,
-        body = excluded.body,
-        category_slug = excluded.category_slug,
-        hero_image_url = excluded.hero_image_url,
-        status = 'published',
-        is_breaking = excluded.is_breaking,
-        is_featured = excluded.is_featured,
-        seo_title = excluded.seo_title,
-        seo_description = excluded.seo_description,
-        updated_at = excluded.updated_at`;
+      ON CONFLICT(slug) DO NOTHING`;
 
     await env.DB.batch(
       currentEditionArticles.map((article) =>
