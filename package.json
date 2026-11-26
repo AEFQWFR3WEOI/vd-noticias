@@ -16,8 +16,6 @@
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
-    "db:migrate:local": "wrangler d1 migrations apply vd-noticias-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply vd-noticias-db --remote",
     "deploy": "vinext build && wrangler deploy"
   },
   "dependencies": {

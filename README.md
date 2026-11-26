@@ -38,8 +38,8 @@ una mejora, cierra el servidor con `Ctrl+C`, ejecuta `git pull` y reinicia.
 
 ## Publicar en internet
 
-La guía completa (base de datos, almacenamiento, clave del administrador,
-publicación y dominio propio) está en
+Cada cambio unido a `main` se publica solo en Cloudflare. La guía (variables,
+primer administrador y dominio propio) está en
 [`docs/PUBLICAR-EN-CLOUDFLARE.md`](docs/PUBLICAR-EN-CLOUDFLARE.md).
 
 ## Acceso independiente a la sala de redacción
@@ -76,8 +76,6 @@ correo, contraseña inicial y rol.
 - `npm run lint`: verifica la calidad del código.
 - `npm run build`: construye y valida producción.
 - `npm run db:generate`: genera migraciones de base de datos.
-- `npm run db:migrate:local`: crea las tablas en la base local.
-- `npm run db:migrate:remote`: crea o actualiza las tablas en Cloudflare.
 - `npm run deploy`: construye y publica en Cloudflare.
 
 Los datos creados en producción viven en D1/R2 y no se versionan en GitHub. Para

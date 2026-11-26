@@ -1,5 +1,7 @@
 // Configuración de Cloudflare para VD Noticias.
-// Guía paso a paso: docs/PUBLICAR-EN-CLOUDFLARE.md
+// Usa la base de datos y el almacenamiento que YA existen en la cuenta
+// (site-creator-d1 y site-creator-r2), así no se pierde ningún dato.
+// Guía: docs/PUBLICAR-EN-CLOUDFLARE.md
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "vd-noticias",
@@ -8,35 +10,27 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
 
-  // Base de datos del periódico (artículos, usuarios, publicidad, etc.).
-  // Crea la base con:  npx wrangler d1 create vd-noticias-db
-  // y pega aquí el "database_id" que devuelve ese comando.
+  // Las variables (EDITORIAL_OWNER_EMAIL, NEXT_PUBLIC_SITE_URL) y los secretos
+  // se administran en el panel de Cloudflare. Esto evita que un despliegue
+  // los borre.
+  "keep_vars": true,
+
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "vd-noticias-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_name": "site-creator-d1",
+      "database_id": "1d5cbe6a-a294-473a-a0a4-305725fc0623",
       "migrations_dir": "drizzle"
     }
   ],
 
-  // Fotos y videos subidos desde la sala de redacción.
-  // Crea el bucket con:  npx wrangler r2 bucket create vd-noticias-media
   "r2_buckets": [
     {
       "binding": "BUCKET",
-      "bucket_name": "vd-noticias-media"
+      "bucket_name": "site-creator-r2"
     }
   ],
 
   // Optimización de imágenes (/_vinext/image).
-  "images": { "binding": "IMAGES" },
-
-  "vars": {
-    // Cambia esto por tu dominio cuando lo conectes, p. ej. https://vdnoticias.com
-    "NEXT_PUBLIC_SITE_URL": "https://vd-noticias.miguelitosuarez112004.workers.dev",
-    "EDITORIAL_OWNER_EMAIL": "propietario@vdnoticias.do"
-  }
-  // EDITORIAL_OWNER_PASSWORD NO va aquí. Se configura como secreto:
-  //   npx wrangler secret put EDITORIAL_OWNER_PASSWORD
+  "images": { "binding": "IMAGES" }
 }

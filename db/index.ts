@@ -25,6 +25,32 @@ const schemaStatements = [
   `CREATE TABLE IF NOT EXISTS audit_log (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, actor_email TEXT NOT NULL, action TEXT NOT NULL, entity_type TEXT NOT NULL, entity_id TEXT NOT NULL, detail TEXT DEFAULT '' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
 ];
 
+const defaultCategories: Array<[string, string, string]> = [
+  ["Nacionales", "nacionales", "Lo que pasa en República Dominicana"],
+  ["Política", "politica", "Gobierno, partidos y Congreso"],
+  ["Economía", "economia", "Mercados, empleo y negocios"],
+  ["Mundo", "mundo", "Noticias internacionales"],
+  ["Deportes", "deportes", "Béisbol, baloncesto y más"],
+  ["Revista", "revista", "Historias y estilo de vida"],
+  ["Entretenimiento", "entretenimiento", "Música, cine y farándula"],
+  ["Tecnología", "tecnologia", "Innovación y vida digital"],
+  ["Salud", "salud", "Salud pública y bienestar"],
+  ["Educación", "educacion", "Escuelas, universidades y formación"],
+  ["Turismo", "turismo", "Destinos y sector turístico"],
+  ["Cultura", "cultura", "Arte, letras y tradición"],
+  ["Opinión", "opinion", "Columnas y análisis"],
+  ["Planeta", "planeta", "Medio ambiente y clima"],
+  ["Videos", "videos", "Lo mejor de Visión Dominicana TV"],
+];
+
+const defaultAdPlacements: Array<[string, string, string, string]> = [
+  ["homepage-top", "Impacto principal", "970x90", "Portada, parte superior"],
+  ["homepage-middle", "Portada premium", "728x90", "Portada, zona central"],
+  ["article-inline", "Dentro de noticia", "728x90", "Cuerpo de cada noticia"],
+  ["sidebar-300x600", "Robapágina", "300x600", "Columna lateral"],
+  ["branded-content", "Especial de marca", "Contenido", "Artículo patrocinado"],
+];
+
 export async function getDbReady() {
   const { env } = await import("cloudflare:workers");
   if (!env.DB) {
@@ -49,6 +75,22 @@ export async function getDbReady() {
         "Noticias, entrevistas y cobertura especial desde República Dominicana."
       )
       .run();
+
+    // Secciones, espacios publicitarios y fila del canal en vivo. Solo se
+    // insertan si faltan; nunca reemplazan lo que ya esté en la base.
+    await env.DB.batch([
+      ...defaultCategories.map(([name, slug, description], index) =>
+        env.DB.prepare(
+          `INSERT OR IGNORE INTO categories (name, slug, description, position) VALUES (?, ?, ?, ?)`
+        ).bind(name, slug, description, index + 1)
+      ),
+      ...defaultAdPlacements.map(([code, name, dimensions, location]) =>
+        env.DB.prepare(
+          `INSERT OR IGNORE INTO ad_placements (code, name, dimensions, location, base_rate, active) VALUES (?, ?, ?, ?, 0, 1)`
+        ).bind(code, name, dimensions, location)
+      ),
+      env.DB.prepare(`INSERT OR IGNORE INTO broadcast_channels (id) VALUES (1)`),
+    ]);
 
     // Las notas de la edición inicial solo se insertan si no existen. Nunca se
     // sobrescriben, para no borrar los cambios que hagan los editores.
