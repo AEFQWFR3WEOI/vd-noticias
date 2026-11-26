@@ -5,7 +5,10 @@ import { PageFooter, PageHeader } from "./components/PageChrome";
 import { SmartBriefing } from "./components/SmartNewsDesk";
 import LatestNewsStage from "./components/LatestNewsStage";
 import BroadcastHub from "./components/BroadcastHub";
-import { getBroadcastHub, getPublishedArticles, getRecentVideos, type PublicArticle } from "./lib/public-content";
+import PulsoRDMap, { type PulsoData } from "./components/PulsoRDMap";
+import HomeSections, { HOME_SECTIONS, type HomeStory } from "./components/HomeSections";
+import { detectProvince, isProvinceSlug } from "./lib/provinces";
+import { getArticleAuthorName, getBroadcastHub, getPublishedArticles, getRecentVideos, type PublicArticle } from "./lib/public-content";
 import { absoluteUrl, PUBLISHER_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./lib/site-config";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +30,6 @@ const sectionLabels: Record<string, string> = {
   planeta: "Planeta",
 };
 
-const sectionOrder = ["nacionales", "politica", "economia", "mundo", "deportes", "entretenimiento", "planeta", "opinion"];
 
 function articleImage(article: PublicArticle) {
   return article.heroImageUrl || "/vd-noticias-logo.png";
@@ -46,31 +48,10 @@ function StoryCard({ article, priority = false }: { article: PublicArticle; prio
         <h3>{article.title}</h3>
       </a>
       <p>{article.summary}</p>
-      <small>{readingTime(article)} min de lectura</small>
     </article>
   );
 }
 
-function EditorialSection({ slug, articles }: { slug: string; articles: PublicArticle[] }) {
-  if (!articles.length) return null;
-  const [lead, ...rest] = articles;
-  const label = sectionLabels[slug] || slug;
-  return (
-    <section className="deep-editorial-section" id={slug}>
-      <div className="deep-section-title"><h2>{label}</h2><a href={`/seccion/${slug}`}>Ver toda la sección →</a></div>
-      <div className="deep-lead-grid real-news-grid">
-        <article className="deep-main-story">
-          <a href={`/noticia/${lead.slug}`}><EditorialMedia src={articleImage(lead)} alt={lead.title} /><span>{label.toUpperCase()}</span><h3>{lead.title}</h3></a>
-          <p>{lead.summary}</p><small>{readingTime(lead)} min de lectura</small>
-        </article>
-        <div className="deep-right-list visual-story-list">
-          {rest.slice(0, 3).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span><h3>{article.title}</h3><p>{article.summary}</p><small>{readingTime(article)} min de lectura</small></div></a></article>)}
-        </div>
-      </div>
-      {rest.length > 3 && <div className="deep-card-row">{rest.slice(3, 7).map((article) => <StoryCard article={article} key={article.slug} />)}</div>}
-    </section>
-  );
-}
 
 export default async function Home() {
   const [published, uploadedVideos, broadcastHub] = await Promise.all([
@@ -81,7 +62,10 @@ export default async function Home() {
   const lead = published.find((article) => article.isFeatured) || published[0];
   const secondary = published.filter((article) => article.slug !== lead?.slug).slice(0, 4);
   const breaking = published.find((article) => article.isBreaking) || lead;
-  const sections = new Map(sectionOrder.map((slug) => [slug, published.filter((article) => article.categorySlug === slug)]));
+  const toHomeStory = (article: PublicArticle): HomeStory => ({ slug: article.slug, title: article.title, summary: article.summary, image: articleImage(article), publishedAt: article.publishedAt });
+  const homeSections: Record<string, HomeStory[]> = Object.fromEntries(HOME_SECTIONS.map(({ slug }) => [slug, published.filter((article) => article.categorySlug === slug).map(toHomeStory)]));
+  const opinionArticles = published.filter((article) => article.categorySlug === "opinion").slice(0, 4);
+  const opinionAuthors: Record<string, string> = Object.fromEntries(await Promise.all(opinionArticles.map(async (article) => [article.slug, await getArticleAuthorName(article.authorEmail)] as const)));
   const briefing = published.slice(0, 18).map((article) => ({ slug: article.slug, title: article.title, summary: article.summary, category: sectionLabels[article.categorySlug] || article.categorySlug }));
   const latestStageArticles = published.slice(0, 8).map((article) => ({
     slug: article.slug,
@@ -94,6 +78,13 @@ export default async function Home() {
     publishedAt: article.publishedAt,
     readingMinutes: readingTime(article),
   }));
+  // Mapa Pulso RD: provincia marcada por el editor o detectada en el texto.
+  const pulsoData: PulsoData = {};
+  for (const article of published) {
+    const province = isProvinceSlug(article.province) ? article.province : detectProvince(article);
+    if (!province) continue;
+    (pulsoData[province] ??= []).push({ slug: article.slug, title: article.title, section: sectionLabels[article.categorySlug] || article.categorySlug });
+  }
   const organizationSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -120,25 +111,25 @@ export default async function Home() {
             <div className="front-secondary">
               {secondary.slice(0, 3).map((article) => <StoryCard article={article} key={article.slug} />)}
             </div>
-            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias →</a></aside>
+            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias</a></aside>
           </section>
         ) : <section className="empty-publication"><span>VD NOTICIAS</span><h1>La próxima edición está en preparación</h1><p>La redacción publicará aquí las informaciones verificadas.</p></section>}
 
         {latestStageArticles.length > 4 && <LatestNewsStage articles={latestStageArticles} />}
       </div>
 
+      <div className="container"><PulsoRDMap data={pulsoData} /></div>
+
       <BroadcastHub data={broadcastHub} videos={uploadedVideos} />
 
       <div className="container front-page-after-media">
         {briefing.length > 0 && <div className="smart-briefing-shell"><SmartBriefing articles={briefing} /></div>}
-        <aside className="pro-inline-ad" aria-label="Publicidad horizontal"><span>PUBLICIDAD · SUPER BANNER 970 × 90</span><div><b>Su empresa frente a una audiencia informada</b><a href="/publicidad">Solicitar propuesta comercial →</a></div></aside>
+        <aside className="pro-inline-ad" aria-label="Publicidad horizontal"><span>PUBLICIDAD · SUPER BANNER 970 × 90</span><div><b>Su empresa frente a una audiencia informada</b><a href="/publicidad">Solicitar propuesta comercial</a></div></aside>
       </div>
 
-      <div className="container complete-newspaper">
-        {sectionOrder.map((slug) => <EditorialSection slug={slug} articles={sections.get(slug) || []} key={slug} />)}
-      </div>
+      <div className="container complete-newspaper"><HomeSections sections={homeSections} authors={opinionAuthors} /></div>
 
-      <section className="services-section"><div className="container services-grid"><article><span>01</span><div><b>Resumen inteligente</b><p>Una portada personalizada con noticias realmente publicadas.</p><a href="#smart-briefing-title">Personalizar →</a></div></article><article><span>02</span><div><b>Fuentes visibles</b><p>La documentación aparece junto a cada cobertura.</p><a href="/terminos#fuentes">Conocer el estándar →</a></div></article><article><span>03</span><div><b>Archivo abierto</b><p>Busca personas, lugares y temas en toda la edición.</p><a href="/buscar">Buscar →</a></div></article><article><span>04</span><div><b>RSS para lectores y sistemas</b><p>Un canal estructurado para seguir las publicaciones.</p><a href="/rss.xml">Abrir RSS →</a></div></article></div></section>
+      <section className="services-section"><div className="container services-grid"><article><span>01</span><div><b>Resumen inteligente</b><p>Una portada personalizada con noticias realmente publicadas.</p><a href="#smart-briefing-title">Personalizar</a></div></article><article><span>02</span><div><b>Fuentes visibles</b><p>La documentación aparece junto a cada cobertura.</p><a href="/terminos#fuentes">Conocer el estándar</a></div></article><article><span>03</span><div><b>Archivo abierto</b><p>Busca personas, lugares y temas en toda la edición.</p><a href="/buscar">Buscar</a></div></article><article><span>04</span><div><b>RSS para lectores y sistemas</b><p>Un canal estructurado para seguir las publicaciones.</p><a href="/rss.xml">Abrir RSS</a></div></article></div></section>
 
       <section className="newsletter pro-newsletter" id="boletin"><div className="container newsletter-inner"><div><span>EL RESUMEN VD</span><h2>Lo esencial, directo a tu correo</h2><p>Noticias verificadas, contexto y las claves del día. Puedes darte de baja cuando quieras.</p></div><NewsletterForm /></div></section>
       <PageFooter />

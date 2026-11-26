@@ -1,4 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-img-element */
+import SectionsMenu, { type MenuEntry } from "./SectionsMenu";
+import HeaderScroll from "./HeaderScroll";
+
 const sections = [
   "Nacionales",
   "Política",
@@ -34,15 +37,21 @@ const sectionHref = (section: string) => {
   return `/seccion/${sectionSlug(section)}`;
 };
 
-const menuGroups = [
-  { title: "Actualidad", links: ["Nacionales", "Ciudad", "Educación", "Salud", "Justicia", "Política", "Sucesos", "A Fondo", "Reportajes"] },
-  { title: "Economía", links: ["Finanzas", "Turismo", "Agro", "Empleo", "Negocios", "Energía", "Consumo", "Vivienda"] },
-  { title: "Revista", links: ["Música", "Cine", "Cultura", "Farándula", "Moda", "Belleza", "Buena Vida", "Sociales"] },
-  { title: "Deportes", links: ["Baloncesto", "Fútbol", "Béisbol", "Motor", "Golf", "Ciclismo", "Tenis", "Olimpismo"] },
-  { title: "Opinión", links: ["Editorial", "En Desarrollo", "Columnistas", "Ágora", "En Directo", "El Espía"] },
-  { title: "Mundo", links: ["Estados Unidos", "América Latina", "Haití", "Europa", "Medio Oriente", "Asia", "África", "Caribe"] },
-  { title: "Planeta", links: ["Medioambiente", "Ciencia", "Clima", "Tecnología", "Historia", "Cambio Climático"] },
-  { title: "VD Media", links: ["En vivo", "Programación", "Videos", "Pódcasts"] },
+const sub = (...labels: string[]) => labels.map((label) => ({ label, href: sectionHref(label) }));
+
+// Menú lateral (botón «Menú»): mismo orden y estilo de lista con «+».
+const drawerEntries: MenuEntry[] = [
+  { title: "Última Hora", href: "/seccion/ultimas" },
+  { title: "Actualidad", href: "/seccion/nacionales", links: sub("Nacionales", "Ciudad", "Educación", "Salud", "Justicia", "Sucesos", "A Fondo", "Reportajes") },
+  { title: "Política", href: "/seccion/politica", links: sub("Gobierno", "Congreso", "Partidos", "Elecciones") },
+  { title: "Mundo", href: "/seccion/mundo", links: sub("Estados Unidos", "América Latina", "Haití", "Europa", "Medio Oriente", "Asia", "África", "Caribe") },
+  { title: "Economía", href: "/seccion/economia", links: sub("Finanzas", "Turismo", "Agro", "Empleo", "Negocios", "Energía", "Consumo", "Vivienda") },
+  { title: "Revista", href: "/seccion/revista", links: sub("Música", "Cine", "Cultura", "Farándula", "Moda", "Belleza", "Buena Vida", "Sociales") },
+  { title: "Deportes", href: "/seccion/deportes", links: sub("Béisbol", "Baloncesto", "Fútbol", "Motor", "Golf", "Ciclismo", "Tenis", "Olimpismo") },
+  { title: "Opinión", href: "/seccion/opinion", links: sub("Editorial", "En Desarrollo", "Columnistas", "Ágora", "En Directo", "El Espía") },
+  { title: "Planeta", href: "/seccion/planeta", links: sub("Medioambiente", "Ciencia", "Clima", "Tecnología", "Historia", "Cambio Climático") },
+  { title: "Videos", href: "/seccion/videos", links: sub("En vivo", "Programación", "Videos") },
+  { title: "Pódcasts", href: "/programacion#programas" },
 ];
 
 const footerGroups = [
@@ -67,72 +76,45 @@ export function PageHeader({ active, showAd = false }: HeaderProps) {
   const displayDate = today.charAt(0).toUpperCase() + today.slice(1);
   return (
     <>
-      <div className="utility-bar pro-utility">
-        <div className="container utility-inner">
-          <span>{displayDate}</span>
-          <div className="utility-links">
-            <span>Santo Domingo · República Dominicana</span>
-            <a href="/rss.xml">RSS</a>
+      <div className="vd-topbar">
+        <div className="container vd-topbar-inner">
+          <span className="vd-topbar-date">{displayDate}</span>
+          <span className="vd-topbar-place">Santo Domingo, República Dominicana</span>
+          <nav className="vd-topbar-links" aria-label="Enlaces rápidos">
+            <a href="/#boletin">Boletín</a>
             <a href="/publicidad">Anúnciate</a>
-          </div>
+            <a href="/rss.xml">RSS</a>
+          </nav>
         </div>
       </div>
 
-      {showAd && (
-        <aside className="ad-shell pro-top-ad container" aria-label="Espacio publicitario superior">
-          <span>PUBLICIDAD</span>
-          <strong>Presencia principal para marcas e instituciones</strong>
-          <small>Leaderboard premium · 970 × 90</small>
-        </aside>
-      )}
+      <HeaderScroll />
+      <header className="vd-header" data-show-ad={showAd ? "1" : undefined}>
+        <div className="vd-header-main">
+          <div className="container vd-header-grid">
+            <div className="vd-header-left">
+              <SectionsMenu entries={drawerEntries} />
+              <a className="vd-icon-btn" href="/buscar" aria-label="Buscar noticias">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                <span>Buscar</span>
+              </a>
+            </div>
 
-      <header className="site-header pro-header">
-        <div className="container pro-masthead">
-          <div className="masthead-left">
-            <details className="mega-menu">
-              <summary aria-label="Abrir menú de secciones">
-                <span className="hamburger" aria-hidden="true"><i /><i /><i /></span>
-                <b>Menú</b>
-              </summary>
-              <div className="mega-panel">
-                <div className="container mega-panel-inner">
-                  <div className="mega-intro">
-                    <span>EXPLORA VD NOTICIAS</span>
-                    <h2>Todo lo que importa, en un solo lugar.</h2>
-                    <p>Noticias, análisis, opinión, multimedia y servicios para entender el país.</p>
-                  </div>
-                  {menuGroups.map((group) => (
-                    <nav key={group.title} aria-label={group.title}>
-                      <h3>{group.title}</h3>
-                      {group.links.map((link) => <a href={sectionHref(link)} key={link}>{link}</a>)}
-                    </nav>
-                  ))}
-                  <div className="mega-service">
-                    <span>VD EN VIVO</span>
-                    <b>La señal de Visión Dominicana TV</b>
-                    <a href="/programacion#en-vivo">Ver transmisión →</a>
-                  </div>
-                </div>
-              </div>
-            </details>
-            <span className="edition-label">Edición RD</span>
-          </div>
+            <a className="vd-logo" href="/" aria-label="VD Noticias, portada">
+              <img src="/vd-logo-header.png" alt="VD Noticias" width="525" height="365" />
+            </a>
 
-          <a className="vd-masthead-logo" href="/" aria-label="VD Noticias, portada">
-            <img src="/vd-noticias-logo.png" alt="VD Noticias" width="512" height="512" />
-          </a>
-
-          <div className="masthead-actions">
-            <a className="live-link" href="/programacion#en-vivo"><i /> En vivo</a>
-            <a className="pro-search" href="/buscar" aria-label="Buscar noticias"><span>⌕</span><b>Buscar</b></a>
+            <div className="vd-header-right">
+              <a className="vd-live" href="/programacion#en-vivo"><i aria-hidden="true" /><span>En vivo</span></a>
+              <a className="vd-cta" href="/#boletin">Recibe el boletín</a>
+            </div>
           </div>
         </div>
 
-        <nav className="main-nav pro-nav" aria-label="Secciones principales">
-          <div className="container nav-scroll">
-            <a className={active === "Portada" ? "active" : ""} href="/">Portada</a>
-            {sections.map((section) => (
-              <a className={active === section ? "active" : ""} href={sectionHref(section)} key={section}>{section}</a>
+        <nav className="vd-nav" aria-label="Secciones principales">
+          <div className="container vd-nav-scroll">
+            {sections.filter((section) => section !== "Programación").map((section) => (
+              <a className={active === section ? "is-active" : ""} aria-current={active === section ? "page" : undefined} href={sectionHref(section)} key={section}>{section}</a>
             ))}
           </div>
         </nav>

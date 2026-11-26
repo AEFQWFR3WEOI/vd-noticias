@@ -42,7 +42,7 @@ export default function BroadcastHub({ data, videos, expanded = false }: { data:
       <div className="container">
         <header className="vd-media-heading">
           <div><span><i /> VD MEDIA CENTER</span><h2>La noticia se ve, se escucha y se vive</h2><p>Señal en vivo, videos, programas y pódcasts de Visión Dominicana TV.</p></div>
-          {!expanded && <a href="/programacion">Abrir programación completa →</a>}
+          {!expanded && <a href="/programacion">Abrir programación completa</a>}
         </header>
 
         <div className="vd-live-stage">
@@ -50,7 +50,7 @@ export default function BroadcastHub({ data, videos, expanded = false }: { data:
             <div className="vd-live-screen">
               <LiveChannelPlayer settings={settings} />
             </div>
-            <div className="vd-live-copy"><span>SEÑAL PERMANENTE DE VISIÓN DOMINICANA TV</span><h3>{settings.title}</h3><p>{settings.description}</p><a href="/programacion#programas">Ver parrilla completa →</a></div>
+            <div className="vd-live-copy"><span>SEÑAL PERMANENTE DE VISIÓN DOMINICANA TV</span><h3>{settings.title}</h3><p>{settings.description}</p><a href="/programacion#programas">Ver parrilla completa</a></div>
           </article>
 
           <aside className="vd-on-air">
@@ -59,14 +59,14 @@ export default function BroadcastHub({ data, videos, expanded = false }: { data:
               {schedule.map((program, index) => <article key={program.id}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{program.scheduleDay}</small><h4>{program.title}</h4><p>{program.kind === "podcast" ? "Pódcast" : "Programa"}{program.scheduleTime ? ` · ${formatTime(program.scheduleTime)}` : ""}</p></div></article>)}
             </div>
             <div className="vd-channel-uptime"><i /><span><b>Canal preparado para operar 24/7</b><small>Principal, respaldo y continuidad</small></span></div>
-            <a className="vd-schedule-link" href="/programacion#programas">Ver todos los espacios →</a>
+            <a className="vd-schedule-link" href="/programacion#programas">Ver todos los espacios</a>
           </aside>
         </div>
 
         <div className="vd-video-block" id="videos">
-          <div className="vd-media-subheading"><div><span>VD PLAY</span><h3>La noticia también se ve</h3></div><a href="/seccion/videos">Todos los videos →</a></div>
+          <div className="vd-media-subheading"><div><span>VD PLAY</span><h3>La noticia también se ve</h3></div><a href="/seccion/videos">Todos los videos</a></div>
           {videos.length ? <div className="vd-video-emphasis">
-            <article className="vd-video-featured"><video src={videos[0].url} controls preload="metadata" playsInline /><div><span>{videos[0].articleCategorySlug.toUpperCase()}</span><h3><a href={`/noticia/${videos[0].articleSlug}`}>{videos[0].articleTitle}</a></h3><p>{videos[0].articleSummary}</p><a href={`/noticia/${videos[0].articleSlug}`}>Ver noticia completa →</a></div></article>
+            <article className="vd-video-featured"><video src={videos[0].url} controls preload="metadata" playsInline /><div><span>{videos[0].articleCategorySlug.toUpperCase()}</span><h3><a href={`/noticia/${videos[0].articleSlug}`}>{videos[0].articleTitle}</a></h3><p>{videos[0].articleSummary}</p><a href={`/noticia/${videos[0].articleSlug}`}>Ver noticia completa</a></div></article>
             <div className="vd-video-rail">{videos.slice(1, videoLimit).map((video) => <article key={video.id}><video src={video.url} controls preload="metadata" playsInline /><span>{video.articleCategorySlug.toUpperCase()}</span><h4><a href={`/noticia/${video.articleSlug}`}>{video.articleTitle}</a></h4><p>{video.articleSummary}</p></article>)}</div>
           </div> : <div className="vd-video-empty"><span>VD PLAY</span><h3>Los próximos reportajes en video aparecerán aquí</h3><p>Al publicar una noticia con video desde la sala de redacción, se integrará automáticamente.</p></div>}
         </div>

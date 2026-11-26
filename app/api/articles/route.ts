@@ -3,6 +3,7 @@ import { getDbReady } from "../../../db";
 import { articleRevisions, articles, auditLog } from "../../../db/schema";
 import { canPublish, getEditorialUser } from "../../lib/editorial-auth";
 import { evaluateEditorialQuality } from "../../lib/editorial-quality";
+import { isProvinceSlug } from "../../lib/provinces";
 
 function slugify(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 90);
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
       categorySlug,
       authorEmail: user.email,
       heroImageUrl,
+      province: isProvinceSlug(body.province) ? body.province : null,
       status,
       isBreaking: Boolean(body.isBreaking),
       isFeatured: Boolean(body.isFeatured),
