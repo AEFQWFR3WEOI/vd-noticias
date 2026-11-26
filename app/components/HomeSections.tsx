@@ -164,7 +164,7 @@ function Opinion({ stories, authors }: { stories: HomeStory[]; authors: Record<s
     <div className="hs-opinion">
       {stories.slice(0, 4).map((story) => {
         const author = authors[story.slug] || "Redacción VD Noticias";
-        const initials = author.split(/\s+/).filter((word) => /^[A-ZÁÉÍÓÚÑ]/.test(word)).slice(0, 2).map((word) => word[0]).join("") || "VD";
+        const initials = /VD/.test(author) ? "VD" : author.split(/\s+/).filter((word) => /^[A-ZÁÉÍÓÚÑ]/.test(word)).slice(0, 2).map((word) => word[0]).join("") || "VD";
         return (
           <article key={story.slug} className="hs-opinion-card">
             <a href={href(story)}>

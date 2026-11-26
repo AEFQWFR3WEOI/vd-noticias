@@ -3398,3 +3398,12 @@ html.header-hidden .pro-header { transform: translateY(calc(-1 * var(--masthead-
   .hs-opinion::-webkit-scrollbar { display: none; }
   .hs-opinion-card { flex: 0 0 80%; scroll-snap-align: start; }
 }
+
+/* Deportes con 4 noticias: grande a la izquierda y 3 apiladas a la derecha */
+.hs-visual-4 { grid-template-columns: 2fr 1fr; grid-auto-rows: 150px; }
+.hs-visual-4 .hs-overlay.is-big { grid-row: span 3; }
+/* Si una foto no carga: fondo con el logo en lugar del texto roto */
+.hs-media .editorial-media-element, .vd-latest .editorial-media-element { color: transparent; background: #dfe5ef url(/vd-favicon.svg) center / 44px no-repeat; }
+@media (max-width: 720px) {
+  .hs-visual-4 { grid-template-columns: none; }
+}
