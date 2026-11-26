@@ -3192,9 +3192,9 @@ iframe { max-width: 100%; }
 
 /* ===== Lectura más profesional ===== */
 /* Encabezado: se oculta la franja del logo al bajar y reaparece al subir. */
-.pro-header { transition: transform .25s ease; will-change: transform; }
-html.header-hidden .pro-header { transform: translateY(calc(-1 * var(--masthead-h, 0px))); }
-@media (prefers-reduced-motion: reduce) { .pro-header { transition: none; } }
+.vd-header { transition: transform .25s ease; will-change: transform; }
+html.header-hidden .vd-header { transform: translateY(calc(-1 * var(--masthead-h, 0px))); }
+@media (prefers-reduced-motion: reduce) { .vd-header { transition: none; } }
 
 /* Foto principal de la noticia: del ancho del texto, proporción 16:9,
    sin franjas negras a los lados. */
@@ -3406,4 +3406,69 @@ html.header-hidden .pro-header { transform: translateY(calc(-1 * var(--masthead-
 .hs-media .editorial-media-element, .vd-latest .editorial-media-element { color: transparent; background: #dfe5ef url(/vd-favicon.svg) center / 44px no-repeat; }
 @media (max-width: 720px) {
   .hs-visual-4 { grid-template-columns: none; }
+}
+
+/* =====================================================================
+   Encabezado alta gama
+   ===================================================================== */
+.vd-topbar { background: #010616; color: #8f9fc0; font: 500 11.5px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .02em; border-bottom: 1px solid rgba(255,255,255,.06); }
+.vd-topbar-inner { display: flex; align-items: center; gap: 18px; min-height: 32px; }
+.vd-topbar-date { color: #dfe7f7; font-weight: 600; }
+.vd-topbar-place { padding-left: 18px; border-left: 1px solid rgba(255,255,255,.14); }
+.vd-topbar-links { margin-left: auto; display: flex; gap: 22px; }
+.vd-topbar-links a { color: #dfe7f7; text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; }
+.vd-topbar-links a:hover { color: #fff; }
+
+.vd-header { position: sticky; top: 0; z-index: 40; box-shadow: 0 10px 30px -18px rgba(2, 11, 45, .55); }
+.vd-header-main { background: radial-gradient(120% 140% at 50% 0%, #0a2066 0%, #041038 45%, #020a26 100%); color: #fff; border-bottom: 1px solid rgba(255,255,255,.07); }
+.vd-header-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 92px; gap: 20px; }
+.vd-header-left, .vd-header-right { display: flex; align-items: center; gap: 22px; }
+.vd-header-right { justify-content: flex-end; gap: 14px; }
+.vd-header-left .sections-menu-toggle b, .vd-icon-btn span { font: 700 11px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #fff; }
+.vd-header-left .hamburger i { background: #fff; width: 22px; }
+.vd-icon-btn { display: flex; align-items: center; gap: 9px; color: #fff; padding-left: 22px; border-left: 1px solid rgba(255,255,255,.16); }
+.vd-icon-btn:hover, .vd-header-left .sections-menu-toggle:hover b { color: #ffd2d4; }
+.vd-logo { display: block; line-height: 0; }
+.vd-logo img { height: 70px; width: auto; filter: drop-shadow(0 4px 14px rgba(0,0,0,.35)); }
+.vd-live { display: inline-flex; align-items: center; gap: 9px; height: 36px; padding: 0 16px; border: 1px solid rgba(255, 80, 90, .7); border-radius: 999px; color: #fff; font: 800 11px system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; background: rgba(239, 16, 27, .12); transition: background .2s; }
+.vd-live:hover { background: var(--red); border-color: var(--red); }
+.vd-live i { width: 8px; height: 8px; border-radius: 50%; background: #ff3b45; box-shadow: 0 0 0 0 rgba(255,59,69,.7); animation: pulso-beat 1.8s infinite; }
+.vd-cta { display: inline-flex; align-items: center; height: 36px; padding: 0 18px; border-radius: 999px; background: #fff; color: var(--navy); font: 800 11px system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; transition: transform .15s, box-shadow .15s; }
+.vd-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.25); }
+
+.vd-nav { background: #fff; border-bottom: 1px solid #e3e8f0; position: relative; }
+.vd-nav::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, var(--blue) 0 33.3%, #fff 33.3% 66.6%, var(--red) 66.6% 100%); opacity: .95; }
+.vd-nav-scroll { display: flex; justify-content: center; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.vd-nav-scroll::-webkit-scrollbar { display: none; }
+.vd-nav-scroll a { position: relative; flex: none; padding: 16px 11px 13px; color: #1a2233; font: 600 13.5px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .01em; white-space: nowrap; }
+.vd-nav-scroll a::after { content: ""; position: absolute; left: 11px; right: 11px; bottom: 0; height: 3px; background: var(--red); transform: scaleX(0); transition: transform .2s ease; }
+.vd-nav-scroll a:hover { color: var(--red); }
+.vd-nav-scroll a:hover::after, .vd-nav-scroll a.is-active::after { transform: scaleX(1); }
+.vd-nav-scroll a.is-active { color: var(--navy); font-weight: 800; }
+
+.topics-bar { background: #f6f8fb; color: #4a5568; border-bottom: 1px solid #e3e8f0; }
+.topics-inner { min-height: 38px; gap: 22px; }
+.topics-inner strong { color: var(--red); font: 800 10px system-ui, sans-serif; letter-spacing: .14em; border-right-color: #d5dce8; }
+.topics-inner a { color: #2d3748; font: 600 12.5px system-ui, sans-serif; }
+.topics-inner a:hover { color: var(--red); }
+
+@media (max-width: 1100px) {
+  .vd-cta { display: none; }
+  .vd-nav-scroll { justify-content: flex-start; }
+}
+@media (max-width: 720px) {
+  .vd-topbar-place, .vd-topbar-links a:not(:first-child) { display: none; }
+  .vd-topbar-inner { min-height: 28px; font-size: 11px; }
+  .vd-header-grid { min-height: 62px; gap: 8px; }
+  .vd-header-left { gap: 4px; }
+  .vd-header-left .sections-menu-toggle b, .vd-icon-btn span { display: none; }
+  .vd-icon-btn { padding: 10px; border-left: 0; }
+  .vd-logo img { height: 46px; }
+  .vd-live { height: 32px; padding: 0 11px; letter-spacing: .1em; font-size: 10px; }
+  .vd-nav-scroll a { padding: 13px 10px 11px; font-size: 13px; }
+  .vd-nav { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+}
+@media (max-width: 380px) {
+  .vd-live span { display: none; }
+  .vd-live { width: 32px; padding: 0; justify-content: center; }
 }

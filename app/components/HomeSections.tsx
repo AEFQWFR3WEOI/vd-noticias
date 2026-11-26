@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 import EditorialMedia from "./EditorialMedia";
 
 // Secciones de la portada, cada una con un diseño propio (apertura, franja,

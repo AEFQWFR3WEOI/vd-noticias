@@ -7,8 +7,8 @@ import { useEffect } from "react";
 export default function HeaderScroll() {
   useEffect(() => {
     const root = document.documentElement;
-    const header = document.querySelector<HTMLElement>(".pro-header");
-    const masthead = header?.querySelector<HTMLElement>(".pro-masthead");
+    const header = document.querySelector<HTMLElement>(".vd-header");
+    const masthead = header?.querySelector<HTMLElement>(".vd-header-main");
     if (!header || !masthead) return;
 
     const measure = () => root.style.setProperty("--masthead-h", `${masthead.offsetHeight}px`);

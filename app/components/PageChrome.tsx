@@ -76,48 +76,45 @@ export function PageHeader({ active, showAd = false }: HeaderProps) {
   const displayDate = today.charAt(0).toUpperCase() + today.slice(1);
   return (
     <>
-      <div className="utility-bar pro-utility">
-        <div className="container utility-inner">
-          <span>{displayDate}</span>
-          <div className="utility-links">
-            <span>Santo Domingo · República Dominicana</span>
-            <a href="/rss.xml">RSS</a>
+      <div className="vd-topbar">
+        <div className="container vd-topbar-inner">
+          <span className="vd-topbar-date">{displayDate}</span>
+          <span className="vd-topbar-place">Santo Domingo, República Dominicana</span>
+          <nav className="vd-topbar-links" aria-label="Enlaces rápidos">
+            <a href="/#boletin">Boletín</a>
             <a href="/publicidad">Anúnciate</a>
-          </div>
+            <a href="/rss.xml">RSS</a>
+          </nav>
         </div>
       </div>
 
-      {showAd && (
-        <aside className="ad-shell pro-top-ad container" aria-label="Espacio publicitario superior">
-          <span>PUBLICIDAD</span>
-          <strong>Presencia principal para marcas e instituciones</strong>
-          <small>Leaderboard premium · 970 × 90</small>
-        </aside>
-      )}
-
       <HeaderScroll />
-      <header className="site-header pro-header">
-        <div className="container pro-masthead">
-          <div className="masthead-left">
-            <SectionsMenu entries={drawerEntries} />
-            <span className="edition-label">Edición RD</span>
-          </div>
+      <header className="vd-header" data-show-ad={showAd ? "1" : undefined}>
+        <div className="vd-header-main">
+          <div className="container vd-header-grid">
+            <div className="vd-header-left">
+              <SectionsMenu entries={drawerEntries} />
+              <a className="vd-icon-btn" href="/buscar" aria-label="Buscar noticias">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                <span>Buscar</span>
+              </a>
+            </div>
 
-          <a className="vd-masthead-logo" href="/" aria-label="VD Noticias, portada">
-            <img src="/vd-noticias-logo.png" alt="VD Noticias" width="512" height="512" />
-          </a>
+            <a className="vd-logo" href="/" aria-label="VD Noticias, portada">
+              <img src="/vd-logo-header.png" alt="VD Noticias" width="525" height="365" />
+            </a>
 
-          <div className="masthead-actions">
-            <a className="live-link" href="/programacion#en-vivo"><i /> En vivo</a>
-            <a className="pro-search" href="/buscar" aria-label="Buscar noticias"><span>⌕</span><b>Buscar</b></a>
+            <div className="vd-header-right">
+              <a className="vd-live" href="/programacion#en-vivo"><i aria-hidden="true" /><span>En vivo</span></a>
+              <a className="vd-cta" href="/#boletin">Recibe el boletín</a>
+            </div>
           </div>
         </div>
 
-        <nav className="main-nav pro-nav" aria-label="Secciones principales">
-          <div className="container nav-scroll">
-            <a className={active === "Portada" ? "active" : ""} href="/">Portada</a>
-            {sections.map((section) => (
-              <a className={active === section ? "active" : ""} href={sectionHref(section)} key={section}>{section}</a>
+        <nav className="vd-nav" aria-label="Secciones principales">
+          <div className="container vd-nav-scroll">
+            {sections.filter((section) => section !== "Programación").map((section) => (
+              <a className={active === section ? "is-active" : ""} aria-current={active === section ? "page" : undefined} href={sectionHref(section)} key={section}>{section}</a>
             ))}
           </div>
         </nav>
