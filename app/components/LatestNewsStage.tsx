@@ -83,15 +83,15 @@ export default function LatestNewsStage({ articles }: { articles: LatestStageArt
         </div>
         <div className="latest-stage-shade" aria-hidden="true" />
         <article className="latest-stage-story" key={`story-${active.slug}`} aria-live="polite">
-          <div className="latest-stage-meta"><a href={`/seccion/${active.categorySlug}`}>{active.category}</a><time dateTime={active.publishedAt || undefined}>{active.time}</time><span>{active.readingMinutes} min de lectura</span></div>
+          <div className="latest-stage-meta"><a href={`/seccion/${active.categorySlug}`}>{active.category}</a><time dateTime={active.publishedAt || undefined}>{active.time}</time></div>
           <h3><a href={`/noticia/${active.slug}`}>{active.title}</a></h3>
           <p>{active.summary}</p>
           <a className="latest-stage-cta" href={`/noticia/${active.slug}`}>Leer noticia completa</a>
         </article>
         <div className="latest-stage-controls" aria-label="Controles del carrusel">
-          <button type="button" onClick={() => goTo(current - 1)} aria-label="Noticia anterior">←</button>
-          <button className="latest-stage-pause" type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Reanudar cambio automático" : "Pausar cambio automático"}>{paused ? "▶" : "Ⅱ"}</button>
-          <button type="button" onClick={() => goTo(current + 1)} aria-label="Noticia siguiente">→</button>
+          <button type="button" onClick={() => goTo(current - 1)} aria-label="Noticia anterior"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+          <button className="latest-stage-pause" type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Reanudar cambio automático" : "Pausar cambio automático"}>{paused ? <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg> : <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="6.5" y="5" width="3.6" height="14" rx="1.2" fill="currentColor" /><rect x="13.9" y="5" width="3.6" height="14" rx="1.2" fill="currentColor" /></svg>}</button>
+          <button type="button" onClick={() => goTo(current + 1)} aria-label="Noticia siguiente"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
         </div>
       </div>
 
