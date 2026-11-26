@@ -3082,3 +3082,58 @@ iframe { max-width: 100%; }
     scroll-snap-align: none;
   }
 }
+
+/* ===== Pulso RD: mapa de noticias por provincia ===== */
+.pulso-rd { margin: 44px 0; padding: 30px; background: linear-gradient(160deg, #020b2d 0%, #04185a 60%, #00278f 100%); color: #fff; border-radius: 6px; border-left: 6px solid var(--red); }
+.pulso-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 18px; }
+.pulso-kicker { display: inline-flex; align-items: center; gap: 7px; color: #ff6b72; font-size: 10px; font-weight: 900; letter-spacing: .16em; }
+.pulso-kicker i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 0 rgba(239,16,27,.7); animation: pulso-beat 1.8s infinite; }
+.pulso-head h2 { margin: 6px 0 6px; font: 800 clamp(30px, 3.4vw, 44px)/1 Georgia, serif; letter-spacing: -.01em; }
+.pulso-head p { margin: 0; max-width: 520px; color: #c9d6f2; font-size: 14px; line-height: 1.5; }
+.pulso-stats { display: flex; gap: 12px; margin: 0; }
+.pulso-stats div { min-width: 118px; padding: 12px 14px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: 4px; }
+.pulso-stats dt { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #9fb3dc; }
+.pulso-stats dd { margin: 4px 0 0; font: 800 28px/1 Georgia, serif; }
+.pulso-stats small { font-size: 14px; color: #9fb3dc; margin-left: 2px; }
+.pulso-body { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(260px, 1fr); gap: 24px; align-items: start; }
+.pulso-map-wrap { position: relative; }
+.pulso-map { width: 100%; height: auto; display: block; filter: drop-shadow(0 12px 22px rgba(0,0,0,.35)); }
+.pulso-province { stroke: #020b2d; stroke-width: 1.2; cursor: pointer; transition: fill .2s, opacity .2s; outline: none; }
+.pulso-province:hover, .pulso-province:focus-visible { opacity: .85; stroke: #fff; stroke-width: 2; }
+.pulso-province.is-selected { stroke: #ffd400; stroke-width: 3; }
+.pulso-dot text { fill: var(--red); font: 900 13px system-ui, sans-serif; }
+.pulso-badge { fill: #fff; }
+.pulso-ring { fill: rgba(239,16,27,.35); transform-box: fill-box; transform-origin: center; animation: pulso-ring 2.4s ease-out infinite; }
+.pulso-tooltip { position: absolute; top: 10px; left: 10px; padding: 8px 12px; background: #fff; color: #020b2d; border-radius: 4px; font-size: 13px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 6px 16px rgba(0,0,0,.25); opacity: 0; transition: opacity .15s; pointer-events: none; }
+.pulso-tooltip[data-visible="true"] { opacity: 1; }
+.pulso-tooltip span { color: #5b6476; font-size: 12px; }
+.pulso-legend { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 11px; color: #9fb3dc; }
+.pulso-legend i { width: 120px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #e7ecf5, #ffd6d6, #f67878, #ef101b, #a8000c); }
+.pulso-panel { background: #fff; color: #111; border-radius: 4px; padding: 20px; }
+.pulso-select { display: flex; flex-direction: column; gap: 6px; font-size: 10px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: #5b6476; }
+.pulso-select select { padding: 10px; font-size: 14px; border: 1px solid #ccd3e0; border-radius: 4px; background: #fff; color: #111; text-transform: none; letter-spacing: 0; font-weight: 600; }
+.pulso-panel h3 { margin: 16px 0 10px; padding-bottom: 10px; border-bottom: 3px solid var(--red); font: 800 24px/1.1 Georgia, serif; color: var(--navy); }
+.pulso-panel ol { list-style: none; margin: 0; padding: 0; counter-reset: pulso; }
+.pulso-panel li { counter-increment: pulso; position: relative; padding: 10px 0 10px 30px; border-bottom: 1px solid #edf0f5; }
+.pulso-panel li::before { content: counter(pulso); position: absolute; left: 0; top: 10px; font: 800 18px Georgia, serif; color: var(--red); }
+.pulso-panel li span { display: block; font-size: 9px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: 3px; }
+.pulso-panel li a { font: 700 15px/1.3 Georgia, serif; color: #111; }
+.pulso-panel li a:hover { color: var(--red); }
+.pulso-empty { font-size: 14px; color: #5b6476; line-height: 1.5; }
+.pulso-empty a, .pulso-more { color: var(--red); font-weight: 800; }
+.pulso-more { display: inline-block; margin-top: 12px; font-size: 13px; }
+.pulso-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #edf0f5; }
+.pulso-top b { width: 100%; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #5b6476; }
+.pulso-top button { border: 1px solid #ccd3e0; background: #f5f7fb; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; color: #111; }
+.pulso-top button em { font-style: normal; color: var(--red); margin-left: 3px; }
+.pulso-top button.is-active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.pulso-top button.is-active em { color: #ff8b90; }
+@keyframes pulso-beat { 0% { box-shadow: 0 0 0 0 rgba(239,16,27,.7); } 70% { box-shadow: 0 0 0 9px rgba(239,16,27,0); } 100% { box-shadow: 0 0 0 0 rgba(239,16,27,0); } }
+@keyframes pulso-ring { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.9); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pulso-ring, .pulso-kicker i { animation: none; } }
+@media (max-width: 900px) {
+  .pulso-rd { padding: 20px 16px; margin: 28px 0; border-radius: 0; }
+  .pulso-head { flex-direction: column; align-items: flex-start; }
+  .pulso-body { grid-template-columns: 1fr; }
+  .pulso-dot text { font-size: 16px; }
+}

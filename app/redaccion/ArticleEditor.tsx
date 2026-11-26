@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { evaluateEditorialQuality, wordCount } from "../lib/editorial-quality";
 import { uploadMediaFile } from "./media-upload";
+import { PROVINCES } from "../lib/provinces";
 
 export type EditableArticle = {
   id: number;
@@ -11,6 +12,7 @@ export type EditableArticle = {
   body: string;
   categorySlug: string;
   heroImageUrl: string | null;
+  province?: string | null;
   isBreaking: boolean;
   status: string;
 };
@@ -65,7 +67,7 @@ export default function ArticleEditor({ canPublish, article }: Props) {
       }
     }
     const endpoint = article ? `/api/articles/${article.id}` : "/api/articles";
-    const response = await fetch(endpoint, { method: article ? "PATCH" : "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ title: values.get("title"), summary: values.get("summary"), body: values.get("body"), categorySlug: values.get("categorySlug"), heroImageUrl, sourceName: values.get("sourceName"), sourceUrl: values.get("sourceUrl"), isBreaking: values.get("isBreaking") === "on", status }) });
+    const response = await fetch(endpoint, { method: article ? "PATCH" : "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ title: values.get("title"), summary: values.get("summary"), body: values.get("body"), categorySlug: values.get("categorySlug"), heroImageUrl, province: values.get("province") || "", sourceName: values.get("sourceName"), sourceUrl: values.get("sourceUrl"), isBreaking: values.get("isBreaking") === "on", status }) });
     const result = await response.json() as { article?: { id: number }; error?: string };
     setMessage(response.ok ? `Noticia ${article ? "actualizada" : "guardada"} correctamente · #${result.article?.id}` : result.error ?? "No se pudo guardar");
     if (response.ok && !article) form.reset();
@@ -73,7 +75,7 @@ export default function ArticleEditor({ canPublish, article }: Props) {
   }
 
   return <form className="editor-form" onSubmit={save} onInput={(event) => inspect(event.currentTarget)}>
-    <div className="editor-top"><label>Titular<input name="title" required defaultValue={article?.title} placeholder="Escribe un titular claro y verificable" /></label><label>Sección<select name="categorySlug" defaultValue={article?.categorySlug || "nacionales"}>{categories.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label></div>
+    <div className="editor-top"><label>Titular<input name="title" required defaultValue={article?.title} placeholder="Escribe un titular claro y verificable" /></label><label>Sección<select name="categorySlug" defaultValue={article?.categorySlug || "nacionales"}>{categories.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label>Provincia (mapa Pulso RD)<select name="province" defaultValue={article?.province || ""}><option value="">Detectar automáticamente</option>{PROVINCES.map((province) => <option value={province.slug} key={province.slug}>{province.name}</option>)}</select></label></div>
     <label>Descripción SEO y de portada<textarea name="summary" rows={2} maxLength={170} required defaultValue={article?.summary} placeholder="Resume qué pasó, dónde y por qué importa (80–170 caracteres)" /></label>
     <label>Contenido de la noticia<textarea className="body-editor" name="body" rows={14} required defaultValue={initialBody} placeholder="Redacta el cuerpo completo de la noticia…" /><small>{words} palabras · mínimo editorial: 150</small></label>
     <div className="editor-source"><label>Fuente principal<input name="sourceName" defaultValue={initialSourceName} placeholder="Institución, documento o persona" /></label><label>Enlace de la fuente<input name="sourceUrl" type="url" defaultValue={initialSourceUrl} placeholder="https://" /></label></div>

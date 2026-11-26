@@ -3,6 +3,7 @@ import { getDbReady } from "../../../../db";
 import { articleRevisions, articles, auditLog } from "../../../../db/schema";
 import { canPublish, getEditorialUser } from "../../../lib/editorial-auth";
 import { evaluateEditorialQuality } from "../../../lib/editorial-quality";
+import { isProvinceSlug } from "../../../lib/provinces";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -26,7 +27,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const heroImageUrl = String(body.heroImageUrl ?? current[0].heroImageUrl ?? "") || null;
     const findings = evaluateEditorialQuality({ title, summary, body: articleBody, categorySlug, heroImageUrl });
     if (requestedStatus === "published" && findings.some((finding) => finding.level === "error")) return Response.json({ error: `Control editorial: ${findings.filter((finding) => finding.level === "error").map((finding) => finding.label).join(" ")}`, findings }, { status: 422 });
-    const [updated] = await db.update(articles).set({ title, body: articleBody, summary, categorySlug, heroImageUrl, status: requestedStatus as "draft" | "review" | "scheduled" | "published" | "archived", isBreaking: Boolean(body.isBreaking ?? current[0].isBreaking), seoTitle: title.slice(0, 70), seoDescription: summary.slice(0, 170), publishedAt: requestedStatus === "published" ? current[0].publishedAt ?? new Date().toISOString() : current[0].publishedAt, updatedAt: new Date().toISOString() }).where(eq(articles.id, id)).returning();
+    const province = body.province === undefined ? current[0].province : isProvinceSlug(body.province) ? body.province : null;
+    const [updated] = await db.update(articles).set({ title, body: articleBody, summary, categorySlug, heroImageUrl, province, status: requestedStatus as "draft" | "review" | "scheduled" | "published" | "archived", isBreaking: Boolean(body.isBreaking ?? current[0].isBreaking), seoTitle: title.slice(0, 70), seoDescription: summary.slice(0, 170), publishedAt: requestedStatus === "published" ? current[0].publishedAt ?? new Date().toISOString() : current[0].publishedAt, updatedAt: new Date().toISOString() }).where(eq(articles.id, id)).returning();
     await db.insert(articleRevisions).values({ articleId: id, editorEmail: user.email, title, body: articleBody, status: requestedStatus, note: String(body.note ?? "") });
     await db.insert(auditLog).values({ actorEmail: user.email, action: "article.updated", entityType: "article", entityId: String(id), detail: requestedStatus });
     return Response.json({ article: updated });

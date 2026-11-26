@@ -5,6 +5,8 @@ import { PageFooter, PageHeader } from "./components/PageChrome";
 import { SmartBriefing } from "./components/SmartNewsDesk";
 import LatestNewsStage from "./components/LatestNewsStage";
 import BroadcastHub from "./components/BroadcastHub";
+import PulsoRDMap, { type PulsoData } from "./components/PulsoRDMap";
+import { detectProvince, isProvinceSlug } from "./lib/provinces";
 import { getBroadcastHub, getPublishedArticles, getRecentVideos, type PublicArticle } from "./lib/public-content";
 import { absoluteUrl, PUBLISHER_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./lib/site-config";
 
@@ -94,6 +96,13 @@ export default async function Home() {
     publishedAt: article.publishedAt,
     readingMinutes: readingTime(article),
   }));
+  // Mapa Pulso RD: provincia marcada por el editor o detectada en el texto.
+  const pulsoData: PulsoData = {};
+  for (const article of published) {
+    const province = isProvinceSlug(article.province) ? article.province : detectProvince(article);
+    if (!province) continue;
+    (pulsoData[province] ??= []).push({ slug: article.slug, title: article.title, section: sectionLabels[article.categorySlug] || article.categorySlug });
+  }
   const organizationSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -126,6 +135,8 @@ export default async function Home() {
 
         {latestStageArticles.length > 4 && <LatestNewsStage articles={latestStageArticles} />}
       </div>
+
+      <div className="container"><PulsoRDMap data={pulsoData} /></div>
 
       <BroadcastHub data={broadcastHub} videos={uploadedVideos} />
 

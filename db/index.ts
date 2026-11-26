@@ -12,7 +12,7 @@ const schemaStatements = [
   `CREATE INDEX IF NOT EXISTS login_attempts_ip_idx ON login_attempts (ip_address, created_at)`,
   `CREATE TABLE IF NOT EXISTS broadcast_channels (id INTEGER PRIMARY KEY NOT NULL, enabled INTEGER DEFAULT 1 NOT NULL, always_on INTEGER DEFAULT 1 NOT NULL, is_live INTEGER DEFAULT 0 NOT NULL, source_mode TEXT DEFAULT 'automatic' NOT NULL, provider TEXT DEFAULT 'cloudflare' NOT NULL, primary_url TEXT DEFAULT '' NOT NULL, backup_url TEXT DEFAULT '' NOT NULL, continuity_url TEXT DEFAULT '' NOT NULL, title TEXT DEFAULT 'Visión Dominicana TV en vivo' NOT NULL, description TEXT DEFAULT 'Noticias, entrevistas y cobertura especial desde República Dominicana.' NOT NULL, poster_url TEXT DEFAULT '' NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, description TEXT DEFAULT '' NOT NULL, position INTEGER DEFAULT 0 NOT NULL)`,
-  `CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, title TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, summary TEXT DEFAULT '' NOT NULL, body TEXT DEFAULT '' NOT NULL, category_slug TEXT NOT NULL, author_email TEXT NOT NULL, hero_image_url TEXT, status TEXT DEFAULT 'draft' NOT NULL, is_breaking INTEGER DEFAULT 0 NOT NULL, is_featured INTEGER DEFAULT 0 NOT NULL, seo_title TEXT, seo_description TEXT, published_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, title TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, summary TEXT DEFAULT '' NOT NULL, body TEXT DEFAULT '' NOT NULL, category_slug TEXT NOT NULL, author_email TEXT NOT NULL, hero_image_url TEXT, province TEXT, status TEXT DEFAULT 'draft' NOT NULL, is_breaking INTEGER DEFAULT 0 NOT NULL, is_featured INTEGER DEFAULT 0 NOT NULL, seo_title TEXT, seo_description TEXT, published_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS article_revisions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, article_id INTEGER NOT NULL, editor_email TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL, status TEXT NOT NULL, note TEXT DEFAULT '' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS media_assets (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, object_key TEXT NOT NULL UNIQUE, filename TEXT NOT NULL, content_type TEXT NOT NULL, size INTEGER NOT NULL, alt_text TEXT DEFAULT '' NOT NULL, uploaded_by TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS broadcast_settings (id INTEGER PRIMARY KEY NOT NULL, is_live INTEGER DEFAULT 0 NOT NULL, stream_url TEXT DEFAULT '' NOT NULL, title TEXT DEFAULT 'Visión Dominicana TV en vivo' NOT NULL, description TEXT DEFAULT 'Noticias, entrevistas y cobertura especial desde República Dominicana.' NOT NULL, poster_url TEXT DEFAULT '' NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
@@ -75,6 +75,13 @@ export async function getDbReady() {
         "Noticias, entrevistas y cobertura especial desde República Dominicana."
       )
       .run();
+
+    // Columna «province» para instalaciones creadas antes del mapa Pulso RD.
+    const articleColumns = await env.DB.prepare(`PRAGMA table_info(articles)`).all();
+    const hasProvince = (articleColumns.results as { name: string }[]).some((column) => column.name === "province");
+    if (!hasProvince) {
+      await env.DB.prepare(`ALTER TABLE articles ADD COLUMN province TEXT`).run();
+    }
 
     // Secciones, espacios publicitarios y fila del canal en vivo. Solo se
     // insertan si faltan; nunca reemplazan lo que ya esté en la base.

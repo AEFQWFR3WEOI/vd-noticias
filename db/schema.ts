@@ -46,6 +46,9 @@ export const articles = sqliteTable("articles", {
   categorySlug: text("category_slug").notNull(),
   authorEmail: text("author_email").notNull(),
   heroImageUrl: text("hero_image_url"),
+  // Provincia de la noticia (slug, p. ej. "santiago"). Vacío = se detecta
+  // automáticamente a partir del texto para el mapa Pulso RD.
+  province: text("province"),
   status: text("status", { enum: ["draft", "review", "scheduled", "published", "archived"] })
     .notNull()
     .default("draft"),
