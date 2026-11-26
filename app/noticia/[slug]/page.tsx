@@ -108,7 +108,6 @@ export default async function ArticlePage({ params }: Props) {
           <div className="article-body">
             {paragraphs.map((paragraph, index) => <div key={`${paragraph.slice(0, 24)}-${index}`}><p className={index === 0 ? "dropcap" : ""}>{paragraph}</p>{index === 2 && <aside className="article-ad"><span>PUBLICIDAD</span><strong>Espacio publicitario identificado</strong><small>La publicidad no interviene en las decisiones editoriales.</small></aside>}</div>)}
             <footer className="article-endnote">
-              {sources.length > 0 && <p className="article-endnote-sources"><b>{sources.length > 1 ? "Fuentes:" : "Fuente:"}</b> {sources.map((source, index) => <span key={`${source.name}-${index}`}>{index > 0 && " · "}{source.url ? <a href={source.url} target="_blank" rel="noopener noreferrer nofollow">{source.name}</a> : source.name}</span>)}</p>}
               <p className="article-endnote-meta"><span>{authorName}</span><span aria-hidden="true">·</span><a href="/terminos">Cómo trabajamos</a><span aria-hidden="true">·</span><a href="/contacto?asunto=correccion">¿Viste un error? Avísanos</a></p>
             </footer>
           </div>
