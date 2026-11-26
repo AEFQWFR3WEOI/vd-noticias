@@ -3243,3 +3243,158 @@ html.header-hidden .pro-header { transform: translateY(calc(-1 * var(--masthead-
 .vd-latest-list a:hover b { color: var(--red); }
 .vd-latest-list .editorial-media-element { width: 76px; height: 76px; border-radius: 6px; object-fit: cover; }
 @media (max-width: 1100px) { .vd-latest { position: static; } }
+
+/* =====================================================================
+   Portada: secciones con diseño propio (escritorio y teléfono)
+   ===================================================================== */
+.home-sections { display: flex; flex-direction: column; gap: 0; }
+.hs-section { padding: 46px 0; border-top: 1px solid #dde3ee; }
+.hs-section:first-child { border-top: 0; }
+.hs-section a { color: inherit; }
+.hs-section h3 a:hover, .hs-section h4:hover, .hs-section b:hover { color: var(--red); }
+.hs-media { display: block; overflow: hidden; background: #e9edf3; border-radius: 4px; }
+.hs-media .editorial-media-element { display: block; width: 100%; height: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform .4s ease; }
+.hs-section a:hover .hs-media .editorial-media-element { transform: scale(1.035); }
+.hs-section time, .hs-section small { font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #7a8496; }
+
+/* Encabezado de sección */
+.hs-head { display: flex; align-items: flex-end; gap: 22px; margin-bottom: 26px; padding-bottom: 12px; border-bottom: 2px solid var(--navy); position: relative; }
+.hs-head::after { content: ""; position: absolute; left: 0; bottom: -2px; width: 64px; height: 4px; background: var(--red); }
+.hs-head h2 { margin: 0; font: 800 34px/1 Georgia, serif; letter-spacing: -.015em; color: var(--navy); white-space: nowrap; }
+.hs-head nav { display: flex; gap: 6px 18px; flex-wrap: wrap; padding-bottom: 4px; font: 600 13px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.hs-head nav a { color: #4a5568; }
+.hs-head nav a:hover { color: var(--red); }
+.hs-more { margin-left: auto; padding-bottom: 4px; white-space: nowrap; font: 800 12px system-ui, sans-serif; letter-spacing: .04em; text-transform: uppercase; color: var(--blue) !important; }
+.hs-head.is-dark { border-bottom-color: rgba(255,255,255,.35); }
+.hs-head.is-dark h2, .hs-head.is-dark nav a { color: #fff; }
+.hs-head.is-dark nav a { color: #c9d6f2; }
+.hs-head.is-dark .hs-more { color: #ffd400 !important; }
+
+/* 1. Apertura: foto a la izquierda, titular grande a la derecha + fila */
+.hs-apertura-lead { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.hs-apertura-lead h3 { margin: 0 0 14px; font: 800 clamp(26px, 2.5vw, 34px)/1.12 Georgia, serif; letter-spacing: -.01em; color: #0d1424; }
+.hs-apertura-lead p { margin: 0 0 14px; font: 400 17px/1.55 Georgia, serif; color: #3d4757; }
+.hs-row { display: grid; gap: 24px; margin-top: 30px; padding-top: 26px; border-top: 1px solid #e6ebf2; }
+.hs-row-1 { grid-template-columns: minmax(0, 1fr); max-width: 320px; }
+.hs-row-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hs-row-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.hs-row-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.hs-card h4 { margin: 12px 0 0; font: 700 17px/1.25 Georgia, serif; color: #0d1424; }
+
+/* 2. Franja oscura (Política) */
+.hs-franja-section { background: var(--navy); color: #fff; border-top: 0; box-shadow: 0 0 0 100vmax var(--navy); clip-path: inset(0 -100vmax); }
+.hs-franja-section + .hs-section { border-top: 0; }
+.hs-franja-grid { display: grid; gap: 26px; }
+.hs-franja-grid.hs-row-3 { grid-template-columns: 1.4fr 1fr 1fr; }
+.hs-franja-grid.hs-row-2 { grid-template-columns: 1.4fr 1fr; }
+.hs-franja-grid.hs-row-1 { grid-template-columns: minmax(0, 720px); }
+.hs-franja-card h3 { margin: 14px 0 8px; font: 700 19px/1.25 Georgia, serif; color: #fff; }
+.hs-franja-card.is-first h3 { font-size: 25px; }
+.hs-franja-card p { margin: 0; color: #c9d6f2; font-size: 15px; line-height: 1.5; }
+.hs-franja-card .hs-media { border-radius: 4px; }
+.hs-franja-links { list-style: none; margin: 26px 0 0; padding: 18px 0 0; border-top: 1px solid rgba(255,255,255,.18); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.hs-franja-links a { font: 700 15px/1.3 Georgia, serif; color: #fff; }
+.hs-franja-links a:hover { color: #ffd400; }
+
+/* 3. Sobria (Economía): principal + columnas de titulares sin fotos */
+.hs-sobria { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 0 34px; }
+.hs-sobria-lead h3 { margin: 16px 0 10px; font: 800 26px/1.15 Georgia, serif; color: #0d1424; }
+.hs-sobria-lead p { margin: 0 0 10px; color: #3d4757; font: 400 16px/1.5 Georgia, serif; }
+.hs-sobria-list { list-style: none; margin: 0; padding: 0 0 0 34px; border-left: 1px solid #e6ebf2; }
+.hs-sobria-list li { padding: 0 0 18px; margin-bottom: 18px; border-bottom: 1px solid #e6ebf2; }
+.hs-sobria-list li:last-child { border-bottom: 0; margin-bottom: 0; }
+.hs-sobria-list b { display: block; font: 700 18px/1.25 Georgia, serif; color: #0d1424; margin-bottom: 6px; }
+.hs-sobria-list span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 14px; line-height: 1.45; color: #5b6476; }
+
+/* 4. Visual (Deportes): fotos grandes con titular encima */
+.hs-visual { display: grid; gap: 14px; grid-template-columns: 2fr 1fr 1fr; grid-auto-rows: 210px; }
+.hs-visual-1 { grid-template-columns: 1fr; grid-auto-rows: 380px; }
+.hs-visual-2 { grid-template-columns: 2fr 1fr; grid-auto-rows: 360px; }
+.hs-visual-3 { grid-template-columns: 2fr 1fr; grid-auto-rows: 210px; }
+.hs-overlay { position: relative; display: block; overflow: hidden; border-radius: 6px; background: var(--navy); }
+.hs-overlay.is-big { grid-row: span 2; }
+.hs-visual-1 .hs-overlay.is-big, .hs-visual-2 .hs-overlay.is-big { grid-row: auto; }
+.hs-overlay .hs-media { position: absolute; inset: 0; border-radius: 0; }
+.hs-overlay .hs-media .editorial-media-element { aspect-ratio: auto; height: 100%; }
+.hs-overlay-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(2,11,45,0) 35%, rgba(2,11,45,.9) 100%); }
+.hs-overlay-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; color: #fff; }
+.hs-overlay-text b { font: 700 17px/1.22 Georgia, serif; }
+.hs-overlay.is-big .hs-overlay-text { padding: 24px; }
+.hs-overlay.is-big .hs-overlay-text b { font-size: 28px; line-height: 1.12; }
+.hs-overlay-text small { color: #c9d6f2 !important; }
+.hs-overlay:hover b { color: #fff !important; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+/* 5. Compacta (Mundo, Planeta): tres columnas con miniatura */
+.hs-compacta { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 30px; }
+.hs-compacta a { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 14px; align-items: start; }
+.hs-compacta .hs-media .editorial-media-element { aspect-ratio: 4 / 3; }
+.hs-compacta b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font: 700 16px/1.28 Georgia, serif; color: #0d1424; margin-bottom: 6px; }
+.hs-compacta span { display: flex; flex-direction: column; }
+
+/* 6. Opinión: autor con iniciales y tarjeta tipo columna */
+.hs-opinion { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+.hs-opinion-card a { display: flex; flex-direction: column; height: 100%; padding: 22px; background: #f6f3ec; border-top: 4px solid var(--red); border-radius: 0 0 6px 6px; }
+.hs-opinion-author { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font: 700 13px system-ui, sans-serif; color: #4a5568; }
+.hs-opinion-author i { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--navy); color: #fff; font: 700 14px Georgia, serif; font-style: normal; }
+.hs-opinion-card h3 { margin: 0 0 10px; font: italic 700 20px/1.25 Georgia, serif; color: #0d1424; }
+.hs-opinion-card p { margin: 0; font-size: 14px; line-height: 1.5; color: #5b6476; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.hs-opinion-card a:hover h3 { color: var(--red); }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
+  .hs-row-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hs-sobria { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 30px; }
+  .hs-sobria-lead { grid-column: 1 / -1; }
+  .hs-sobria-list { padding-left: 0; border-left: 0; }
+  .hs-compacta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hs-franja-links { grid-template-columns: 1fr; gap: 12px; }
+}
+
+/* ---------- Teléfono ---------- */
+@media (max-width: 720px) {
+  .hs-section { padding: 30px 0; }
+  .hs-head { flex-wrap: wrap; gap: 10px 14px; margin-bottom: 18px; }
+  .hs-head h2 { font-size: 26px; }
+  .hs-more { order: 2; font-size: 11px; }
+  .hs-head nav { order: 3; width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; font-size: 13px; -webkit-overflow-scrolling: touch; }
+  .hs-head nav::-webkit-scrollbar { display: none; }
+  .hs-head nav a { flex: none; padding: 6px 12px; border: 1px solid #d5dce8; border-radius: 999px; }
+  .hs-head.is-dark nav a { border-color: rgba(255,255,255,.3); }
+
+  /* Apertura: foto arriba, luego lista con miniatura a la derecha */
+  .hs-apertura-lead { grid-template-columns: 1fr; gap: 14px; }
+  .hs-apertura-lead h3 { font-size: 24px; }
+  .hs-apertura-lead p { font-size: 16px; }
+  .hs-row, .hs-row-1, .hs-row-2, .hs-row-3, .hs-row-4 { grid-template-columns: 1fr; max-width: none; gap: 0; margin-top: 20px; padding-top: 0; }
+  .hs-card a { display: grid; grid-template-columns: minmax(0, 1fr) 104px; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid #e6ebf2; }
+  .hs-card .hs-media { order: 2; }
+  .hs-card h4 { margin: 0; font-size: 16px; }
+
+  /* Franja: tarjetas que se deslizan con el dedo */
+  .hs-franja-grid, .hs-franja-grid.hs-row-3, .hs-franja-grid.hs-row-2 { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-right: calc(-1 * var(--mobile-pad, 16px)); padding-right: var(--mobile-pad, 16px); }
+  .hs-franja-grid::-webkit-scrollbar { display: none; }
+  .hs-franja-card { flex: 0 0 82%; scroll-snap-align: start; }
+  .hs-franja-card.is-first h3 { font-size: 21px; }
+  .hs-franja-card p { display: none; }
+
+  /* Sobria: todo en una columna */
+  .hs-sobria { grid-template-columns: 1fr; gap: 18px; }
+  .hs-sobria-lead h3 { font-size: 22px; }
+  .hs-sobria-list b { font-size: 17px; }
+
+  /* Visual: carrusel de fotos con titular */
+  .hs-visual, .hs-visual-1, .hs-visual-2, .hs-visual-3 { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-right: calc(-1 * var(--mobile-pad, 16px)); padding-right: var(--mobile-pad, 16px); }
+  .hs-visual::-webkit-scrollbar { display: none; }
+  .hs-overlay, .hs-overlay.is-big { flex: 0 0 84%; height: 340px; scroll-snap-align: start; }
+  .hs-overlay.is-big .hs-overlay-text b, .hs-overlay-text b { font-size: 21px; }
+
+  /* Compacta: lista de una columna */
+  .hs-compacta { grid-template-columns: 1fr; gap: 0; }
+  .hs-compacta li { padding: 12px 0; border-bottom: 1px solid #e6ebf2; }
+  .hs-compacta a { grid-template-columns: 96px minmax(0, 1fr); }
+
+  /* Opinión: tarjetas que se deslizan */
+  .hs-opinion { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-right: calc(-1 * var(--mobile-pad, 16px)); padding-right: var(--mobile-pad, 16px); }
+  .hs-opinion::-webkit-scrollbar { display: none; }
+  .hs-opinion-card { flex: 0 0 80%; scroll-snap-align: start; }
+}
