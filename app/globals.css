@@ -1223,7 +1223,7 @@ button, input { font: inherit; }
   .mega-panel-inner { grid-template-columns: 1fr 1fr; gap: 25px; max-height: 70vh; overflow-y: auto; }
   .mega-intro { grid-column: 1 / -1; }
   .mega-panel nav:last-of-type { display: none; }
-  .mega-menu summary b, .live-link { font-size: 0; }
+  .mega-menu summary b, .sections-menu-toggle b, .live-link { font-size: 0; }
   .live-link i { width: 10px; height: 10px; }
   .vd-masthead-logo { width: 145px; height: 72px; }
   .vd-masthead-logo img { width: 280px; }
@@ -1855,9 +1855,9 @@ iframe { max-width: 100%; }
   .masthead-left,
   .masthead-actions { gap: 0; }
   .edition-label,
-  .mega-menu summary b,
+  .mega-menu summary b, .sections-menu-toggle b,
   .live-link { display: none; }
-  .mega-menu summary,
+  .mega-menu summary, .sections-menu-toggle,
   .pro-search {
     display: grid;
     place-items: center;
@@ -3084,7 +3084,7 @@ iframe { max-width: 100%; }
 }
 
 /* ===== Menú lateral de secciones (reemplaza el mega menú) ===== */
-.sections-menu-toggle { display: flex; align-items: center; gap: 9px; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; font: inherit; }
+.sections-menu-toggle { display: flex; align-items: center; gap: 9px; background: none; border: 0; padding: 0; color: white; cursor: pointer; font: inherit; }
 .sections-menu-toggle b { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
 .sections-menu .hamburger.is-open i:first-child { transform: translateY(6px) rotate(45deg); }
 .sections-menu .hamburger.is-open i:nth-child(2) { opacity: 0; }
