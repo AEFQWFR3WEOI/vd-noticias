@@ -138,7 +138,6 @@ export default async function Home() {
 
       <div className="container complete-newspaper"><HomeSections sections={homeSections} authors={opinionAuthors} /></div>
 
-      <section className="services-section"><div className="container services-grid"><article><span>01</span><div><b>Resumen inteligente</b><p>Una portada personalizada con noticias realmente publicadas.</p><a href="#smart-briefing-title">Personalizar</a></div></article><article><span>02</span><div><b>Fuentes visibles</b><p>La documentación aparece junto a cada cobertura.</p><a href="/terminos#fuentes">Conocer el estándar</a></div></article><article><span>03</span><div><b>Archivo abierto</b><p>Busca personas, lugares y temas en toda la edición.</p><a href="/buscar">Buscar</a></div></article><article><span>04</span><div><b>RSS para lectores y sistemas</b><p>Un canal estructurado para seguir las publicaciones.</p><a href="/rss.xml">Abrir RSS</a></div></article></div></section>
 
       <section className="newsletter pro-newsletter" id="boletin"><div className="container newsletter-inner"><div><span>EL RESUMEN VD</span><h2>Lo esencial, directo a tu correo</h2><p>Noticias verificadas, contexto y las claves del día. Puedes darte de baja cuando quieras.</p></div><NewsletterForm /></div></section>
       <PageFooter />
