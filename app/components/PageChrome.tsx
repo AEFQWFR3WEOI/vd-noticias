@@ -56,6 +56,7 @@ const drawerEntries: MenuEntry[] = [
   { title: "Videos", href: "/seccion/videos", links: sub("En vivo", "Programación", "Videos") },
   { title: "Reels", href: "/reels" },
   { title: "Pódcasts", href: "/programacion#programas" },
+  { title: "Envía tu denuncia", href: "/denuncia" },
 ];
 
 const footerGroups = [
@@ -93,6 +94,7 @@ export async function PageHeader({ active, showAd = false }: HeaderProps) {
           <span className="vd-topbar-date">{displayDate}</span>
           <span className="vd-topbar-place">Santo Domingo, República Dominicana</span>
           <nav className="vd-topbar-links" aria-label="Enlaces rápidos">
+            <a className="vd-topbar-tip" href="/denuncia">Envía tu denuncia</a>
             <a href="/#boletin">Boletín</a>
             <a href="/publicidad">Anúnciate</a>
             <a href="/rss.xml">RSS</a>
@@ -162,7 +164,7 @@ export async function PageFooter() {
         {footerGroups.map((group) => ({ ...group, links: liveVisible ? group.links : group.links.filter((link) => !["En vivo", "Programación", "Pódcasts"].includes(link)) })).filter((group) => group.links.length).map((group) => <nav key={group.title} aria-label={group.title}><h3>{group.title}</h3>{group.links.map((link) => <a href={sectionHref(link)} key={link}>{link}</a>)}</nav>)}
       </div>
       <div className="container footer-corporate">
-        <a href="/nosotros">Equipo y metodología</a><a href="/publicidad">Publicidad</a><a href="/contacto">Contacto</a><a href="/terminos#correcciones">Correcciones</a><a href="/buscar">Buscar</a><a href="/#boletin">Boletines</a><a href="/rss.xml">RSS</a>
+        <a href="/denuncia">Envía tu denuncia</a><a href="/nosotros">Equipo y metodología</a><a href="/publicidad">Publicidad</a><a href="/contacto">Contacto</a><a href="/terminos#correcciones">Correcciones</a><a href="/buscar">Buscar</a><a href="/#boletin">Boletines</a><a href="/rss.xml">RSS</a>
       </div>
       <div className="container footer-legal">
         <span>© 2026 Visión Dominicana TV. Todos los derechos reservados.</span>

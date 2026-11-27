@@ -139,3 +139,48 @@ export function ReelsManager() {
     </div>
   </div>;
 }
+
+type TipMedia = { key: string; type: string; name: string };
+type TipRow = { id: number; name: string; phone: string; province: string; place: string; description: string; allowCredit: boolean; status: string; createdAt: string; media: TipMedia[] };
+const TIP_STATUS: Record<string, string> = { new: "Nueva", reviewing: "En revisión", published: "Publicada", discarded: "Descartada" };
+
+export function TipsManager() {
+  const [tips, setTips] = useState<TipRow[]>([]);
+  const [filter, setFilter] = useState("new");
+  const [message, setMessage] = useState("");
+
+  async function load() {
+    const response = await fetch("/api/denuncias");
+    const result = await response.json() as { tips?: TipRow[]; error?: string };
+    if (!response.ok) { setMessage(result.error ?? "No se pudieron cargar"); return; }
+    setTips(result.tips ?? []);
+  }
+  useEffect(() => { void load(); }, []);
+
+  async function setStatus(id: number, status: string) {
+    const response = await fetch("/api/denuncias", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ id, status }) });
+    if (response.ok) await load(); else setMessage("No se pudo actualizar");
+  }
+
+  const visible = tips.filter((tip) => filter === "all" || tip.status === filter);
+  const fileUrl = (key: string) => `/api/denuncias/archivo?key=${encodeURIComponent(key)}`;
+  const phoneDigits = (phone: string) => phone.replace(/\D/g, "").replace(/^(\d{10})$/, "1$1");
+
+  return <div className="tips-manager">
+    <div className="tips-filters">{["new", "reviewing", "published", "discarded", "all"].map((value) => <button type="button" key={value} className={filter === value ? "is-active" : ""} onClick={() => setFilter(value)}>{value === "all" ? "Todas" : TIP_STATUS[value]} <em>{value === "all" ? tips.length : tips.filter((tip) => tip.status === value).length}</em></button>)}</div>
+    {message && <p>{message}</p>}
+    {visible.length ? visible.map((tip) => <article key={tip.id} className="tip-item">
+      <header><b>#{tip.id} · {new Date(`${tip.createdAt.replace(" ", "T")}Z`).toLocaleString("es-DO")}</b><span className={`tip-status is-${tip.status}`}>{TIP_STATUS[tip.status]}</span></header>
+      <p>{tip.description}</p>
+      {(tip.province || tip.place) && <small>📍 {[tip.place, tip.province].filter(Boolean).join(", ")}</small>}
+      {tip.media.length > 0 && <div className="tip-media">{tip.media.map((media) => media.type.startsWith("image/")
+        ? <a key={media.key} href={fileUrl(media.key)} target="_blank" rel="noreferrer"><img src={fileUrl(media.key)} alt={media.name} /></a>
+        : <video key={media.key} src={fileUrl(media.key)} controls preload="metadata" />)}</div>}
+      <footer>
+        <span>{tip.name || "Anónimo"}{tip.allowCredit ? " · permite mencionar su nombre" : ""}</span>
+        {tip.phone && <a href={`https://wa.me/${phoneDigits(tip.phone)}`} target="_blank" rel="noreferrer">WhatsApp {tip.phone}</a>}
+        <span className="tip-actions">{tip.status !== "reviewing" && <button type="button" onClick={() => void setStatus(tip.id, "reviewing")}>En revisión</button>}{tip.status !== "published" && <button type="button" onClick={() => void setStatus(tip.id, "published")}>Publicada</button>}{tip.status !== "discarded" && <button type="button" onClick={() => void setStatus(tip.id, "discarded")}>Descartar</button>}</span>
+      </footer>
+    </article>) : <div className="empty-state"><b>No hay denuncias en esta lista</b></div>}
+  </div>;
+}
