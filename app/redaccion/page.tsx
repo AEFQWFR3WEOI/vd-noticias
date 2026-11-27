@@ -131,7 +131,7 @@ async function Newsroom() {
           <a href="#contenido">▤ Contenido</a>
           <a href="#buzon">✉ Buzón</a>
           <a href="#multimedia">▧ Multimedia</a>
-          <a href="#reels">▶ Videos de Instagram</a>
+          <a href="#reels">▶ Reels de Instagram</a>
           {canPublish(user.role) && <a href="#emision">◉ Emisión y programas</a>}
           {canManageAds(user.role) && <a href="#publicidad">◫ Publicidad</a>}
           {user.role === "administrator" && <a href="#equipo">◎ Equipo</a>}
@@ -339,9 +339,9 @@ async function Newsroom() {
           <div className="panel-heading">
             <div>
               <span>VD REELS</span>
-              <h2>Videos de Instagram</h2>
+              <h2>Reels de Instagram</h2>
             </div>
-            <p>Pega el enlace del reel para mostrarlo en la portada y en Videos</p>
+            <p>Pega el enlace del reel para mostrarlo en la portada y en la página Reels. Los videos normales se suben en Multimedia.</p>
           </div>
           <ReelsManager />
         </section>

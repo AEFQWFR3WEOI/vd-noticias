@@ -113,14 +113,14 @@ export function ReelsManager() {
     }
     const response = await fetch("/api/reels", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: values.get("url"), title: values.get("title"), category: values.get("category"), coverUrl }) });
     const result = await response.json() as { error?: string };
-    setMessage(response.ok ? "Video agregado. Ya aparece en la portada y en Videos." : result.error ?? "No se pudo agregar");
+    setMessage(response.ok ? "Reel agregado. Ya aparece en la portada y en la página Reels." : result.error ?? "No se pudo agregar");
     if (response.ok) { form.reset(); await load(); }
     setBusy(false);
   }
 
   async function remove(id: number) {
     const response = await fetch(`/api/reels?id=${id}`, { method: "DELETE" });
-    setMessage(response.ok ? "Video quitado del periódico." : "No se pudo quitar");
+    setMessage(response.ok ? "Reel quitado del periódico." : "No se pudo quitar");
     if (response.ok) await load();
   }
 
@@ -130,11 +130,11 @@ export function ReelsManager() {
       <label>Titular (opcional)<input name="title" maxLength={200} placeholder="Ej.: Accidente de tránsito en la Jacobo Majluta" /></label>
       <label>Categoría<select name="category" defaultValue="Nacionales">{REEL_CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select></label>
       <label>Portada (opcional, recomendada)<input name="cover" type="file" accept="image/*" /></label>
-      <button disabled={busy}>{busy ? "Guardando…" : "Agregar video"}</button>
+      <button disabled={busy}>{busy ? "Guardando…" : "Agregar reel"}</button>
       {message && <p>{message}</p>}
     </form>
     <div className="team-access-list">
-      <header><b>Videos publicados</b><span>{reels.length}</span></header>
+      <header><b>Reels publicados</b><span>{reels.length}</span></header>
       {reels.map((reel) => <article key={reel.id}><div><b>{reel.title || "Sin titular"}</b><small>{reel.category} · <a href={reel.url} target="_blank" rel="noreferrer">Ver en Instagram</a></small></div><button type="button" onClick={() => void remove(reel.id)}>Quitar</button></article>)}
     </div>
   </div>;

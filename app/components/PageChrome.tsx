@@ -19,6 +19,7 @@ const sections = [
   "Opinión",
   "Planeta",
   "Videos",
+  "Reels",
   "Programación",
 ];
 
@@ -35,6 +36,7 @@ const sectionHref = (section: string) => {
   if (section === "En vivo") return "/programacion#en-vivo";
   if (section === "Pódcasts") return "/programacion#programas";
   if (section === "Videos") return "/seccion/videos";
+  if (section === "Reels") return "/reels";
   return `/seccion/${sectionSlug(section)}`;
 };
 
@@ -52,6 +54,7 @@ const drawerEntries: MenuEntry[] = [
   { title: "Opinión", href: "/seccion/opinion", links: sub("Editorial", "En Desarrollo", "Columnistas", "Ágora", "En Directo", "El Espía") },
   { title: "Planeta", href: "/seccion/planeta", links: sub("Medioambiente", "Ciencia", "Clima", "Tecnología", "Historia", "Cambio Climático") },
   { title: "Videos", href: "/seccion/videos", links: sub("En vivo", "Programación", "Videos") },
+  { title: "Reels", href: "/reels" },
   { title: "Pódcasts", href: "/programacion#programas" },
 ];
 
@@ -64,7 +67,7 @@ const footerGroups = [
   { title: "Mundo", links: ["Estados Unidos", "América Latina", "Haití", "Europa", "Canadá", "Medio Oriente", "Asia", "África", "Caribe"] },
   { title: "Planeta", links: ["Medioambiente", "Ciencia", "Clima", "Tecnología", "Historia", "Cambio Climático"] },
   { title: "Videos", links: ["Actualidad", "Mundo", "Economía", "Revista", "Deportes", "Opinión", "Planeta"] },
-  { title: "VD Media", links: ["En vivo", "Programación", "Videos", "Pódcasts"] },
+  { title: "VD Media", links: ["En vivo", "Programación", "Videos", "Reels", "Pódcasts"] },
 ];
 
 type HeaderProps = {
@@ -123,7 +126,7 @@ export async function PageHeader({ active, showAd = false }: HeaderProps) {
         <nav className="vd-nav" aria-label="Secciones principales">
           <div className="container vd-nav-scroll">
             {sections.filter((section) => section !== "Programación").map((section) => (
-              <a className={[active === section ? "is-active" : "", section === "Videos" ? "is-video" : ""].join(" ").trim() || undefined} aria-current={active === section ? "page" : undefined} href={sectionHref(section)} key={section}>{section === "Videos" && <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg>}{section}</a>
+              <a className={[active === section ? "is-active" : "", section === "Videos" ? "is-video" : section === "Reels" ? "is-reels" : ""].join(" ").trim() || undefined} aria-current={active === section ? "page" : undefined} href={sectionHref(section)} key={section}>{section === "Videos" && <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg>}{section === "Reels" && <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="3" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M10.5 9.5v5l4-2.5z" fill="currentColor" /></svg>}{section}</a>
             ))}
           </div>
         </nav>

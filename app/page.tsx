@@ -122,7 +122,7 @@ export default async function Home() {
       </div>
 
       {reels.length > 0 && <section className="vd-reels" aria-labelledby="vd-reels-title"><div className="container">
-        <header className="vd-reels-head"><div><span><i aria-hidden="true" /> VD REELS</span><h2 id="vd-reels-title">Las noticias en video</h2></div><nav><a href="/seccion/videos">Ver todos</a><a className="vd-reels-ig" href="https://www.instagram.com/visiondominicanatv/" target="_blank" rel="noopener noreferrer">@visiondominicanatv</a></nav></header>
+        <header className="vd-reels-head"><div><span><i aria-hidden="true" /> VD REELS</span><h2 id="vd-reels-title">Las noticias en video</h2></div><nav><a href="/reels">Ver todos los reels</a><a className="vd-reels-ig" href="https://www.instagram.com/visiondominicanatv/" target="_blank" rel="noopener noreferrer">@visiondominicanatv</a></nav></header>
         <ReelsStrip reels={reels} />
       </div></section>}
 

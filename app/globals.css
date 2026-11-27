@@ -3581,3 +3581,16 @@ html.header-hidden .vd-header { transform: translateY(calc(-1 * var(--masthead-h
   .reel-viewer-frame { width: min(100vw, calc(100dvh * 9 / 16)); height: auto; border-radius: 0; }
   .reel-viewer-frame iframe { max-height: none; }
 }
+
+/* Página Reels y acceso «Reels» en la barra */
+.vd-nav-scroll a.is-reels { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: #b0237a; }
+.vd-nav-scroll a.is-reels svg { width: 16px; height: 16px; padding: 2px; border-radius: 4px; background: linear-gradient(45deg, #f58529, #dd2a7b 50%, #8134af); color: #fff; }
+.vd-nav-scroll a.is-reels::after { background: #dd2a7b; }
+.reels-page-hero { padding: 46px 0 34px; background: linear-gradient(180deg, #020a26, #061a52); color: #fff; }
+.reels-page-hero span { display: inline-flex; align-items: center; gap: 8px; font: 800 11px system-ui, sans-serif; letter-spacing: .16em; color: #ff6b72; }
+.reels-page-hero span i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: pulso-beat 1.8s infinite; }
+.reels-page-hero h1 { margin: 10px 0 8px; font: 800 clamp(32px, 4vw, 50px)/1.05 Georgia, serif; }
+.reels-page-hero p { margin: 0 0 18px; max-width: 560px; color: #c9d6f2; font-size: 16px; line-height: 1.5; }
+.reels-page-hero .vd-reels-ig { display: inline-block; color: #fff; font: 700 13px system-ui, sans-serif; }
+.reels-page-body { padding: 30px 0 50px; }
+.reels-page-body .reels-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
