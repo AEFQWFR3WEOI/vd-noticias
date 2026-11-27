@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import BroadcastHub from "../components/BroadcastHub";
 import { PageFooter, PageHeader } from "../components/PageChrome";
 import { getBroadcastHub, getRecentVideos } from "../lib/public-content";
@@ -12,6 +13,8 @@ export const metadata: Metadata = {
 
 export default async function ProgrammingPage() {
   const [data, videos] = await Promise.all([getBroadcastHub(), getRecentVideos(24)]);
+  // Mientras no haya en vivo ni programas reales, esta página lleva a los videos.
+  if (!data.liveVisible && data.programsAreSamples) redirect("/seccion/videos");
   return (
     <main className="public-site programming-page">
       <PageHeader active="Programación" />

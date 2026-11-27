@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-html-link-for-pages */
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -9,10 +10,10 @@ export type MenuEntry = {
   links?: { label: string; href: string }[];
 };
 
-type Props = { entries: MenuEntry[] };
+type Props = { entries: MenuEntry[]; showLive?: boolean };
 
 // Menú lateral de secciones: lista vertical con subsecciones desplegables (+).
-export default function SectionsMenu({ entries }: Props) {
+export default function SectionsMenu({ entries, showLive = false }: Props) {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -98,7 +99,7 @@ export default function SectionsMenu({ entries }: Props) {
             })}
           </ul>
         </nav>
-        <a className="sections-live" href="/programacion#en-vivo" onClick={() => setOpen(false)}><i /> Ver VD en vivo</a>
+        {showLive ? <a className="sections-live" href="/programacion#en-vivo" onClick={() => setOpen(false)}><i /> Ver VD en vivo</a> : <a className="sections-live" href="/seccion/videos" onClick={() => setOpen(false)}>▶ Ver videos VD</a>}
       </aside>
       </>, document.body)}
     </div>

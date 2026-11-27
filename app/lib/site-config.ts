@@ -3,7 +3,7 @@ export const PUBLISHER_NAME = "Visión Dominicana TV";
 export const SITE_DESCRIPTION =
   "Noticias verificadas de República Dominicana y el mundo, con contexto, fuentes, opinión y video de Visión Dominicana TV.";
 
-const fallbackUrl = "https://vd-noticias.miguelitosuarez112004.workers.dev";
+const fallbackUrl = "https://visiondominicanatv.com";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || fallbackUrl).replace(/\/$/, "");
 export const DEFAULT_SHARE_IMAGE = `${SITE_URL}/vd-noticias-logo.png`;

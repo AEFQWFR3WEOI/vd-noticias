@@ -18,7 +18,7 @@ import {
   canPublish,
   getEditorialUser,
 } from "../lib/editorial-auth";
-import { CampaignManager, PasswordChanger, TeamManager } from "./AdminTools";
+import { CampaignManager, PasswordChanger, ReelsManager, TeamManager } from "./AdminTools";
 import ArticleEditor from "./ArticleEditor";
 import BroadcastManager from "./BroadcastManager";
 import MediaLibrary from "./MediaLibrary";
@@ -131,6 +131,7 @@ async function Newsroom() {
           <a href="#contenido">▤ Contenido</a>
           <a href="#buzon">✉ Buzón</a>
           <a href="#multimedia">▧ Multimedia</a>
+          <a href="#reels">▶ Reels de Instagram</a>
           {canPublish(user.role) && <a href="#emision">◉ Emisión y programas</a>}
           {canManageAds(user.role) && <a href="#publicidad">◫ Publicidad</a>}
           {user.role === "administrator" && <a href="#equipo">◎ Equipo</a>}
@@ -333,6 +334,16 @@ async function Newsroom() {
             <p>Imágenes, videos, audios y documentos</p>
           </div>
           <MediaLibrary />
+        </section>
+        <section className="content-panel" id="reels">
+          <div className="panel-heading">
+            <div>
+              <span>VD REELS</span>
+              <h2>Reels de Instagram</h2>
+            </div>
+            <p>Pega el enlace del reel para mostrarlo en la portada y en la página Reels. Los videos normales se suben en Multimedia.</p>
+          </div>
+          <ReelsManager />
         </section>
         {canPublish(user.role) && (
           <section className="content-panel" id="emision">

@@ -16,7 +16,16 @@ export type PublicBroadcastProgram = typeof broadcastPrograms.$inferSelect;
 export type BroadcastHubData = {
   settings: PublicBroadcastSettings;
   programs: PublicBroadcastProgram[];
+  /** true si los programas son los de ejemplo (aún no hay programas reales). */
+  programsAreSamples: boolean;
+  /** true si el canal en vivo debe mostrarse en el sitio. */
+  liveVisible: boolean;
 };
+
+/** El en vivo se muestra solo si el canal está marcado como visible y tiene una señal configurada. */
+export function isLiveVisible(settings: PublicBroadcastSettings) {
+  return Boolean(settings.enabled && settings.sourceMode !== "maintenance" && (settings.primaryUrl || settings.backupUrl || settings.continuityUrl));
+}
 
 const defaultBroadcastSettings: PublicBroadcastSettings = {
   id: 1,
@@ -202,12 +211,25 @@ export async function getBroadcastHub(): Promise<BroadcastHubData> {
       db.select().from(broadcastChannels).where(eq(broadcastChannels.id, 1)).limit(1),
       db.select().from(broadcastPrograms).where(eq(broadcastPrograms.active, true)).orderBy(broadcastPrograms.position, desc(broadcastPrograms.createdAt)).limit(24),
     ]);
+    const settings = settingsRows[0] ?? defaultBroadcastSettings;
     return {
-      settings: settingsRows[0] ?? defaultBroadcastSettings,
+      settings,
       programs: programs.length ? programs : defaultPrograms,
+      programsAreSamples: programs.length === 0,
+      liveVisible: isLiveVisible(settings),
     };
   } catch {
-    return { settings: defaultBroadcastSettings, programs: defaultPrograms };
+    return { settings: defaultBroadcastSettings, programs: defaultPrograms, programsAreSamples: true, liveVisible: false };
+  }
+}
+
+export async function getLiveVisible() {
+  try {
+    const db = await getDbReady();
+    const [settings] = await db.select().from(broadcastChannels).where(eq(broadcastChannels.id, 1)).limit(1);
+    return settings ? isLiveVisible(settings) : false;
+  } catch {
+    return false;
   }
 }
 

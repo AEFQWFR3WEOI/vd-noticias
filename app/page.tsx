@@ -7,9 +7,12 @@ import LatestNewsStage from "./components/LatestNewsStage";
 import BroadcastHub from "./components/BroadcastHub";
 import PulsoRDMap, { type PulsoData } from "./components/PulsoRDMap";
 import HomeSections, { HOME_SECTIONS, type HomeStory } from "./components/HomeSections";
+import ReelsStrip from "./components/ReelsStrip";
+import { getReels } from "./lib/reels";
 import { detectProvince, isProvinceSlug } from "./lib/provinces";
 import { getArticleAuthorName, getBroadcastHub, getPublishedArticles, getRecentVideos, type PublicArticle } from "./lib/public-content";
 import { absoluteUrl, PUBLISHER_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./lib/site-config";
+import { sectionLabel } from "./lib/section-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +47,7 @@ function StoryCard({ article, priority = false }: { article: PublicArticle; prio
     <article className="vd-story-card">
       <a href={`/noticia/${article.slug}`}>
         <EditorialMedia src={articleImage(article)} alt={article.title} priority={priority} />
-        <span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span>
+        <span className="kicker">{sectionLabel(article.categorySlug)}</span>
         <h3>{article.title}</h3>
       </a>
       <p>{article.summary}</p>
@@ -54,10 +57,11 @@ function StoryCard({ article, priority = false }: { article: PublicArticle; prio
 
 
 export default async function Home() {
-  const [published, uploadedVideos, broadcastHub] = await Promise.all([
+  const [published, uploadedVideos, broadcastHub, reels] = await Promise.all([
     getPublishedArticles(undefined, 100),
     getRecentVideos(8),
     getBroadcastHub(),
+    getReels(12),
   ]);
   const lead = published.find((article) => article.isFeatured) || published[0];
   const secondary = published.filter((article) => article.slug !== lead?.slug).slice(0, 4);
@@ -105,18 +109,23 @@ export default async function Home() {
           <section className="front-grid" aria-labelledby="portada-heading">
             <h1 id="portada-heading" className="sr-only">Portada de VD Noticias</h1>
             <article className="front-lead">
-              <a href={`/noticia/${lead.slug}`}><div className="front-lead-media"><EditorialMedia src={articleImage(lead)} alt={lead.title} priority /><span>{(sectionLabels[lead.categorySlug] || lead.categorySlug).toUpperCase()}</span></div><h2>{lead.title}</h2></a>
+              <a href={`/noticia/${lead.slug}`}><div className="front-lead-media"><EditorialMedia src={articleImage(lead)} alt={lead.title} priority /><span className="kicker">{sectionLabel(lead.categorySlug)}</span></div><h2>{lead.title}</h2></a>
               <p>{lead.summary}</p><div className="editorial-meta"><b>Redacción VD Noticias</b><span>{readingTime(lead)} min de lectura</span></div>
             </article>
             <div className="front-secondary">
               {secondary.slice(0, 3).map((article) => <StoryCard article={article} key={article.slug} />)}
             </div>
-            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias</a></aside>
+            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span className="kicker">{sectionLabel(article.categorySlug)}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias</a></aside>
           </section>
         ) : <section className="empty-publication"><span>VD NOTICIAS</span><h1>La próxima edición está en preparación</h1><p>La redacción publicará aquí las informaciones verificadas.</p></section>}
 
         {latestStageArticles.length > 4 && <LatestNewsStage articles={latestStageArticles} />}
       </div>
+
+      {reels.length > 0 && <section className="vd-reels" aria-labelledby="vd-reels-title"><div className="container">
+        <header className="vd-reels-head"><div><span><i aria-hidden="true" /> VD REELS</span><h2 id="vd-reels-title">Las noticias en video</h2></div><nav><a href="/reels">Ver todos los reels</a><a className="vd-reels-ig" href="https://www.instagram.com/visiondominicanatv/" target="_blank" rel="noopener noreferrer">@visiondominicanatv</a></nav></header>
+        <ReelsStrip reels={reels} />
+      </div></section>}
 
       <div className="container"><PulsoRDMap data={pulsoData} /></div>
 
@@ -129,7 +138,6 @@ export default async function Home() {
 
       <div className="container complete-newspaper"><HomeSections sections={homeSections} authors={opinionAuthors} /></div>
 
-      <section className="services-section"><div className="container services-grid"><article><span>01</span><div><b>Resumen inteligente</b><p>Una portada personalizada con noticias realmente publicadas.</p><a href="#smart-briefing-title">Personalizar</a></div></article><article><span>02</span><div><b>Fuentes visibles</b><p>La documentación aparece junto a cada cobertura.</p><a href="/terminos#fuentes">Conocer el estándar</a></div></article><article><span>03</span><div><b>Archivo abierto</b><p>Busca personas, lugares y temas en toda la edición.</p><a href="/buscar">Buscar</a></div></article><article><span>04</span><div><b>RSS para lectores y sistemas</b><p>Un canal estructurado para seguir las publicaciones.</p><a href="/rss.xml">Abrir RSS</a></div></article></div></section>
 
       <section className="newsletter pro-newsletter" id="boletin"><div className="container newsletter-inner"><div><span>EL RESUMEN VD</span><h2>Lo esencial, directo a tu correo</h2><p>Noticias verificadas, contexto y las claves del día. Puedes darte de baja cuando quieras.</p></div><NewsletterForm /></div></section>
       <PageFooter />

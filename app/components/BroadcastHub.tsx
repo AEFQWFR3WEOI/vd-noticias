@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-img-element */
 import type { BroadcastHubData, PublicBroadcastProgram, PublicVideo } from "../lib/public-content";
 import LiveChannelPlayer from "./LiveChannelPlayer";
+import { sectionLabel } from "../lib/section-labels";
 
 function formatTime(value: string) {
   const [hourValue, minute = "00"] = value.split(":");
@@ -34,18 +35,23 @@ function ProgramCard({ program }: { program: PublicBroadcastProgram }) {
 }
 
 export default function BroadcastHub({ data, videos, expanded = false }: { data: BroadcastHubData; videos: PublicVideo[]; expanded?: boolean }) {
-  const { settings, programs } = data;
+  const { settings, programs, liveVisible, programsAreSamples } = data;
+  const showPrograms = !programsAreSamples;
   const schedule = programs.slice(0, expanded ? 8 : 4);
   const videoLimit = expanded ? 8 : 4;
+  // Sin en vivo, sin videos y sin programas reales no hay nada que mostrar.
+  if (!liveVisible && !videos.length && !showPrograms) return null;
   return (
-    <section className={`vd-media-hub ${expanded ? "expanded" : ""}`} id="en-vivo">
+    <section className={`vd-media-hub ${expanded ? "expanded" : ""}${liveVisible ? "" : " is-videos-only"}`} id={liveVisible ? "en-vivo" : "vd-videos"}>
       <div className="container">
         <header className="vd-media-heading">
-          <div><span><i /> VD MEDIA CENTER</span><h2>La noticia se ve, se escucha y se vive</h2><p>Señal en vivo, videos, programas y pódcasts de Visión Dominicana TV.</p></div>
-          {!expanded && <a href="/programacion">Abrir programación completa</a>}
+          {liveVisible
+            ? <div><span><i /> VD MEDIA CENTER</span><h2>La noticia se ve, se escucha y se vive</h2><p>Señal en vivo, videos, programas y pódcasts de Visión Dominicana TV.</p></div>
+            : <div><span><i /> VD VIDEOS</span><h2>La noticia también se ve</h2><p>Reportajes, entrevistas y coberturas en video de Visión Dominicana TV.</p></div>}
+          {!expanded && (liveVisible ? <a href="/programacion">Abrir programación completa</a> : <a href="/seccion/videos">Ver todos los videos</a>)}
         </header>
 
-        <div className="vd-live-stage">
+        {liveVisible && <div className="vd-live-stage">
           <article className="vd-live-player">
             <div className="vd-live-screen">
               <LiveChannelPlayer settings={settings} />
@@ -53,28 +59,28 @@ export default function BroadcastHub({ data, videos, expanded = false }: { data:
             <div className="vd-live-copy"><span>SEÑAL PERMANENTE DE VISIÓN DOMINICANA TV</span><h3>{settings.title}</h3><p>{settings.description}</p><a href="/programacion#programas">Ver parrilla completa</a></div>
           </article>
 
-          <aside className="vd-on-air">
+          {showPrograms && <aside className="vd-on-air">
             <header><div><span>EN ANTENA</span><h3>Programación</h3></div><time>Hora RD</time></header>
             <div className="vd-schedule-list">
               {schedule.map((program, index) => <article key={program.id}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{program.scheduleDay}</small><h4>{program.title}</h4><p>{program.kind === "podcast" ? "Pódcast" : "Programa"}{program.scheduleTime ? ` · ${formatTime(program.scheduleTime)}` : ""}</p></div></article>)}
             </div>
             <div className="vd-channel-uptime"><i /><span><b>Canal preparado para operar 24/7</b><small>Principal, respaldo y continuidad</small></span></div>
             <a className="vd-schedule-link" href="/programacion#programas">Ver todos los espacios</a>
-          </aside>
-        </div>
+          </aside>}
+        </div>}
 
-        <div className="vd-video-block" id="videos">
-          <div className="vd-media-subheading"><div><span>VD PLAY</span><h3>La noticia también se ve</h3></div><a href="/seccion/videos">Todos los videos</a></div>
-          {videos.length ? <div className="vd-video-emphasis">
-            <article className="vd-video-featured"><video src={videos[0].url} controls preload="metadata" playsInline /><div><span>{videos[0].articleCategorySlug.toUpperCase()}</span><h3><a href={`/noticia/${videos[0].articleSlug}`}>{videos[0].articleTitle}</a></h3><p>{videos[0].articleSummary}</p><a href={`/noticia/${videos[0].articleSlug}`}>Ver noticia completa</a></div></article>
-            <div className="vd-video-rail">{videos.slice(1, videoLimit).map((video) => <article key={video.id}><video src={video.url} controls preload="metadata" playsInline /><span>{video.articleCategorySlug.toUpperCase()}</span><h4><a href={`/noticia/${video.articleSlug}`}>{video.articleTitle}</a></h4><p>{video.articleSummary}</p></article>)}</div>
-          </div> : <div className="vd-video-empty"><span>VD PLAY</span><h3>Los próximos reportajes en video aparecerán aquí</h3><p>Al publicar una noticia con video desde la sala de redacción, se integrará automáticamente.</p></div>}
-        </div>
+        {videos.length > 0 && <div className="vd-video-block" id="videos">
+          {liveVisible && <div className="vd-media-subheading"><div><span>VD PLAY</span><h3>La noticia también se ve</h3></div><a href="/seccion/videos">Todos los videos</a></div>}
+          <div className="vd-video-emphasis">
+            <article className="vd-video-featured"><video src={videos[0].url} controls preload="metadata" playsInline /><div><span className="kicker">{sectionLabel(videos[0].articleCategorySlug)}</span><h3><a href={`/noticia/${videos[0].articleSlug}`}>{videos[0].articleTitle}</a></h3><p>{videos[0].articleSummary}</p><a href={`/noticia/${videos[0].articleSlug}`}>Ver noticia completa</a></div></article>
+            <div className="vd-video-rail">{videos.slice(1, videoLimit).map((video) => <article key={video.id}><video src={video.url} controls preload="metadata" playsInline /><span className="kicker">{sectionLabel(video.articleCategorySlug)}</span><h4><a href={`/noticia/${video.articleSlug}`}>{video.articleTitle}</a></h4><p>{video.articleSummary}</p></article>)}</div>
+          </div>
+        </div>}
 
-        <div className="vd-program-block" id="programas">
+        {showPrograms && <div className="vd-program-block" id="programas">
           <div className="vd-media-subheading"><div><span>ORIGINALES VD</span><h3>Programas y pódcasts</h3></div><p>Información, conversación y análisis con identidad dominicana.</p></div>
           <div className="vd-program-rail">{programs.slice(0, expanded ? 12 : 6).map((program) => <ProgramCard program={program} key={program.id} />)}</div>
-        </div>
+        </div>}
       </div>
     </section>
   );

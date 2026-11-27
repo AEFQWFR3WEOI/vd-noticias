@@ -214,3 +214,18 @@ export const loginAttempts = sqliteTable(
     index("login_attempts_ip_idx").on(table.ipAddress, table.createdAt),
   ],
 );
+
+// Reels de Instagram que los editores agregan desde la sala de redacción.
+export const videoReels = sqliteTable("video_reels", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  url: text("url").notNull(),
+  shortcode: text("shortcode").notNull().unique(),
+  title: text("title").notNull().default(""),
+  category: text("category").notNull().default(""),
+  coverUrl: text("cover_url").notNull().default(""),
+  // reel = vertical 9:16 · post = publicación 4:5 · horizontal = 16:9
+  format: text("format", { enum: ["reel", "post", "horizontal"] }).notNull().default("reel"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  createdBy: text("created_by").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});

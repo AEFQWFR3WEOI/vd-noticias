@@ -11,6 +11,7 @@ const schemaStatements = [
   `CREATE INDEX IF NOT EXISTS login_attempts_email_idx ON login_attempts (email, created_at)`,
   `CREATE INDEX IF NOT EXISTS login_attempts_ip_idx ON login_attempts (ip_address, created_at)`,
   `CREATE TABLE IF NOT EXISTS broadcast_channels (id INTEGER PRIMARY KEY NOT NULL, enabled INTEGER DEFAULT 1 NOT NULL, always_on INTEGER DEFAULT 1 NOT NULL, is_live INTEGER DEFAULT 0 NOT NULL, source_mode TEXT DEFAULT 'automatic' NOT NULL, provider TEXT DEFAULT 'cloudflare' NOT NULL, primary_url TEXT DEFAULT '' NOT NULL, backup_url TEXT DEFAULT '' NOT NULL, continuity_url TEXT DEFAULT '' NOT NULL, title TEXT DEFAULT 'Visión Dominicana TV en vivo' NOT NULL, description TEXT DEFAULT 'Noticias, entrevistas y cobertura especial desde República Dominicana.' NOT NULL, poster_url TEXT DEFAULT '' NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS video_reels (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, url TEXT NOT NULL, shortcode TEXT NOT NULL UNIQUE, title TEXT DEFAULT '' NOT NULL, category TEXT DEFAULT '' NOT NULL, cover_url TEXT DEFAULT '' NOT NULL, format TEXT DEFAULT 'reel' NOT NULL, active INTEGER DEFAULT 1 NOT NULL, created_by TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, description TEXT DEFAULT '' NOT NULL, position INTEGER DEFAULT 0 NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, title TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, summary TEXT DEFAULT '' NOT NULL, body TEXT DEFAULT '' NOT NULL, category_slug TEXT NOT NULL, author_email TEXT NOT NULL, hero_image_url TEXT, province TEXT, status TEXT DEFAULT 'draft' NOT NULL, is_breaking INTEGER DEFAULT 0 NOT NULL, is_featured INTEGER DEFAULT 0 NOT NULL, seo_title TEXT, seo_description TEXT, published_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL, updated_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS article_revisions (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, article_id INTEGER NOT NULL, editor_email TEXT NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL, status TEXT NOT NULL, note TEXT DEFAULT '' NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP NOT NULL)`,
@@ -81,6 +82,10 @@ export async function getDbReady() {
     const hasProvince = (articleColumns.results as { name: string }[]).some((column) => column.name === "province");
     if (!hasProvince) {
       await env.DB.prepare(`ALTER TABLE articles ADD COLUMN province TEXT`).run();
+    }
+    const reelColumns = await env.DB.prepare(`PRAGMA table_info(video_reels)`).all();
+    if (!(reelColumns.results as { name: string }[]).some((column) => column.name === "format")) {
+      await env.DB.prepare(`ALTER TABLE video_reels ADD COLUMN format TEXT DEFAULT 'reel' NOT NULL`).run();
     }
 
     // Secciones, espacios publicitarios y fila del canal en vivo. Solo se

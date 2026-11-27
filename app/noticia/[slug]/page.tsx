@@ -8,6 +8,7 @@ import { isSpeechEnabled } from "../../lib/speech";
 import { isIndexableArticle, wordCount } from "../../lib/editorial-quality";
 import { getArticleAuthorName, getArticleWithCanonical, getPublishedArticles } from "../../lib/public-content";
 import { absoluteUrl, DEFAULT_SHARE_IMAGE, formatPublishedDate, PUBLISHER_NAME, SITE_NAME, SITE_URL } from "../../lib/site-config";
+import { sectionLabel } from "../../lib/section-labels";
 
 type Props = { params: Promise<{ slug: string }> };
 type Source = { name: string; url?: string };
@@ -49,8 +50,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const SECTION_LABELS: Record<string, string> = { nacionales: "Nacionales", politica: "Política", economia: "Economía", mundo: "Mundo", deportes: "Deportes", entretenimiento: "Entretenimiento", revista: "Revista", tecnologia: "Tecnología", salud: "Salud", educacion: "Educación", turismo: "Turismo", cultura: "Cultura", opinion: "Opinión", planeta: "Planeta", videos: "Videos" };
-const sectionLabel = (slug: string) => SECTION_LABELS[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1);
 
 function timeAgo(value?: string | null) {
   if (!value) return "Reciente";
@@ -110,7 +109,7 @@ export default async function ArticlePage({ params }: Props) {
       <PageHeader />
       <article className="container article-page pro-article">
         <nav className="breadcrumbs"><a href="/">Portada</a><span>›</span><a href={`/seccion/${article.categorySlug}`}>{article.categorySlug}</a><span>›</span><b>Noticia</b></nav>
-        <div className="article-topic-row"><a className="article-category" href={`/seccion/${article.categorySlug}`}>{article.categorySlug.toUpperCase()}</a><a href="/terminos#metodologia">Cómo verificamos</a></div>
+        <div className="article-topic-row"><a className="article-category kicker" href={`/seccion/${article.categorySlug}`}>{sectionLabel(article.categorySlug)}</a><a href="/terminos#metodologia">Cómo verificamos</a></div>
         <h1 className={`article-title ${titleSize}`.trim()}>{article.title}</h1>
         <p className="article-deck">{article.summary}</p>{speechEnabled && <ListenSummary slug={article.slug} />}
         <div className="article-byline"><div className="avatar article-avatar"><img src="/vd-noticias-logo.png" alt="VD Noticias" width="96" height="96" /></div><div><b><a href="/autores/redaccion-vd-noticias">{authorName}</a></b><span>Santo Domingo · Publicado <time dateTime={article.publishedAt || article.createdAt}>{formatPublishedDate(article.publishedAt || article.createdAt, true)}</time> · <i>{minutes} min de lectura</i></span>{article.updatedAt !== article.createdAt && <small>Actualizado <time dateTime={article.updatedAt}>{formatPublishedDate(article.updatedAt, true)}</time></small>}</div></div>
@@ -145,7 +144,7 @@ export default async function ArticlePage({ params }: Props) {
         </div>
         <div className="article-end"><div className="topic-tags" id="temas"><span>TEMAS</span><a href={`/seccion/${article.categorySlug}`}>{article.categorySlug}</a><a href="/seccion/nacionales">República Dominicana</a></div><aside className="author-card"><div className="avatar">VD</div><div><span>SOBRE EL AUTOR</span><b>{authorName}</b><p>Redacción responsable de verificar, contextualizar y actualizar la cobertura de VD Noticias.</p></div><a href="/autores/redaccion-vd-noticias">Ver perfil editorial</a></aside></div>
       </article>
-      {recommended.length > 0 && <section className="container article-recommendations" aria-labelledby="recommendations-heading"><div className="article-recommendations-title"><h2 id="recommendations-heading">Noticias que te pueden interesar</h2><a href={`/seccion/${article.categorySlug}`}>Ver la sección</a></div><div className="article-recommendations-grid">{recommended.map((story) => <article key={story.slug}><a href={`/noticia/${story.slug}`}><EditorialMedia src={story.heroImageUrl || "/vd-noticias-logo.png"} alt={story.title} /><span>{story.categorySlug.toUpperCase()}</span><h3>{story.title}</h3><p>{story.summary}</p></a></article>)}</div></section>}
+      {recommended.length > 0 && <section className="container article-recommendations" aria-labelledby="recommendations-heading"><div className="article-recommendations-title"><h2 id="recommendations-heading">Noticias que te pueden interesar</h2><a href={`/seccion/${article.categorySlug}`}>Ver la sección</a></div><div className="article-recommendations-grid">{recommended.map((story) => <article key={story.slug}><a href={`/noticia/${story.slug}`}><EditorialMedia src={story.heroImageUrl || "/vd-noticias-logo.png"} alt={story.title} /><span className="kicker">{sectionLabel(story.categorySlug)}</span><h3>{story.title}</h3><p>{story.summary}</p></a></article>)}</div></section>}
       <PageFooter />
     </main>
   );
