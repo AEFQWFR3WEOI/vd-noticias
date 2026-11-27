@@ -7,6 +7,8 @@ import LatestNewsStage from "./components/LatestNewsStage";
 import BroadcastHub from "./components/BroadcastHub";
 import PulsoRDMap, { type PulsoData } from "./components/PulsoRDMap";
 import HomeSections, { HOME_SECTIONS, type HomeStory } from "./components/HomeSections";
+import ReelsStrip from "./components/ReelsStrip";
+import { getReels } from "./lib/reels";
 import { detectProvince, isProvinceSlug } from "./lib/provinces";
 import { getArticleAuthorName, getBroadcastHub, getPublishedArticles, getRecentVideos, type PublicArticle } from "./lib/public-content";
 import { absoluteUrl, PUBLISHER_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./lib/site-config";
@@ -54,10 +56,11 @@ function StoryCard({ article, priority = false }: { article: PublicArticle; prio
 
 
 export default async function Home() {
-  const [published, uploadedVideos, broadcastHub] = await Promise.all([
+  const [published, uploadedVideos, broadcastHub, reels] = await Promise.all([
     getPublishedArticles(undefined, 100),
     getRecentVideos(8),
     getBroadcastHub(),
+    getReels(12),
   ]);
   const lead = published.find((article) => article.isFeatured) || published[0];
   const secondary = published.filter((article) => article.slug !== lead?.slug).slice(0, 4);
@@ -117,6 +120,11 @@ export default async function Home() {
 
         {latestStageArticles.length > 4 && <LatestNewsStage articles={latestStageArticles} />}
       </div>
+
+      {reels.length > 0 && <section className="vd-reels" aria-labelledby="vd-reels-title"><div className="container">
+        <header className="vd-reels-head"><div><span><i aria-hidden="true" /> VD REELS</span><h2 id="vd-reels-title">Las noticias en video</h2></div><nav><a href="/seccion/videos">Ver todos</a><a className="vd-reels-ig" href="https://www.instagram.com/visiondominicanatv/" target="_blank" rel="noopener noreferrer">@visiondominicanatv</a></nav></header>
+        <ReelsStrip reels={reels} />
+      </div></section>}
 
       <div className="container"><PulsoRDMap data={pulsoData} /></div>
 

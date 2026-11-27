@@ -79,3 +79,63 @@ export function PasswordChanger() {
 
   return <form className="mini-admin-form" onSubmit={submit}><label>Contraseña actual<input name="currentPassword" type="password" required maxLength={128} autoComplete="current-password" /></label><label>Contraseña nueva<input name="newPassword" type="password" required minLength={12} maxLength={128} autoComplete="new-password" placeholder="Mínimo 12 caracteres" /></label><label>Repite la contraseña nueva<input name="confirmPassword" type="password" required minLength={12} maxLength={128} autoComplete="new-password" /></label><button disabled={busy}>{busy ? "Guardando…" : "Cambiar contraseña"}</button>{message && <p>{message}</p>}</form>;
 }
+
+type ReelRow = { id: number; url: string; title: string; category: string; coverUrl: string; createdAt: string };
+const REEL_CATEGORIES = ["Nacionales", "Internacionales", "Política", "Economía", "Deportes", "Entretenimiento", "Clima", "Sucesos", "Salud", "Tecnología"];
+
+export function ReelsManager() {
+  const [reels, setReels] = useState<ReelRow[]>([]);
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function load() {
+    const response = await fetch("/api/reels");
+    const result = await response.json() as { reels?: ReelRow[] };
+    setReels(result.reels ?? []);
+  }
+  useEffect(() => { void load(); }, []);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = new FormData(form);
+    setBusy(true); setMessage("");
+    let coverUrl = "";
+    const file = values.get("cover") as File | null;
+    if (file?.size) {
+      try {
+        const { uploadMediaFile } = await import("./media-upload");
+        const asset = await uploadMediaFile(file, String(values.get("title") ?? ""), (progress) => setMessage(`Subiendo portada… ${progress}%`));
+        coverUrl = asset.url;
+      } catch (error) {
+        setMessage(error instanceof Error ? error.message : "No se pudo subir la portada"); setBusy(false); return;
+      }
+    }
+    const response = await fetch("/api/reels", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: values.get("url"), title: values.get("title"), category: values.get("category"), coverUrl }) });
+    const result = await response.json() as { error?: string };
+    setMessage(response.ok ? "Video agregado. Ya aparece en la portada y en Videos." : result.error ?? "No se pudo agregar");
+    if (response.ok) { form.reset(); await load(); }
+    setBusy(false);
+  }
+
+  async function remove(id: number) {
+    const response = await fetch(`/api/reels?id=${id}`, { method: "DELETE" });
+    setMessage(response.ok ? "Video quitado del periódico." : "No se pudo quitar");
+    if (response.ok) await load();
+  }
+
+  return <div className="reels-manager">
+    <form className="mini-admin-form" onSubmit={submit}>
+      <label>Enlace del reel de Instagram<input name="url" type="url" required placeholder="https://www.instagram.com/reel/…" /></label>
+      <label>Titular (opcional)<input name="title" maxLength={200} placeholder="Ej.: Accidente de tránsito en la Jacobo Majluta" /></label>
+      <label>Categoría<select name="category" defaultValue="Nacionales">{REEL_CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select></label>
+      <label>Portada (opcional, recomendada)<input name="cover" type="file" accept="image/*" /></label>
+      <button disabled={busy}>{busy ? "Guardando…" : "Agregar video"}</button>
+      {message && <p>{message}</p>}
+    </form>
+    <div className="team-access-list">
+      <header><b>Videos publicados</b><span>{reels.length}</span></header>
+      {reels.map((reel) => <article key={reel.id}><div><b>{reel.title || "Sin titular"}</b><small>{reel.category} · <a href={reel.url} target="_blank" rel="noreferrer">Ver en Instagram</a></small></div><button type="button" onClick={() => void remove(reel.id)}>Quitar</button></article>)}
+    </div>
+  </div>;
+}
