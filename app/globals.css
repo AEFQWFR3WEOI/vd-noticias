@@ -3610,3 +3610,7 @@ a.kicker:hover { color: var(--red) !important; }
   position: absolute; left: 14px; bottom: 14px; z-index: 2;
   padding: 6px 10px !important; background: rgba(255,255,255,.95) !important; color: var(--navy) !important; border-radius: 3px !important;
 }
+.front-lead-media .kicker {
+  position: absolute; left: 16px; bottom: 16px; z-index: 2;
+  padding: 7px 11px !important; background: rgba(255,255,255,.96) !important; color: var(--navy) !important; border-radius: 3px !important;
+}
