@@ -5,8 +5,6 @@ import { createPortal } from "react-dom";
 
 export type ReelItem = { id: number; url: string; title: string; category: string; coverUrl: string; format?: "reel" | "post" | "horizontal" };
 
-// El reproductor de Instagram muestra el video en 4:5 más su cabecera y pie.
-const RATIO: Record<string, number> = { reel: 5 / 4, post: 5 / 4, horizontal: 9 / 16 };
 
 type Props = { reels: ReelItem[]; variant?: "strip" | "grid" };
 
@@ -18,7 +16,7 @@ function Cover({ reel }: { reel: ReelItem }) {
     return <img src={reel.coverUrl} alt={reel.title || "Video de VD Noticias"} loading="lazy" />;
   }
   // Sin portada: vista previa del propio Instagram (sin interacción).
-  return <iframe src={embedUrl(reel)} title={reel.title || "Video de Instagram"} loading="lazy" tabIndex={-1} aria-hidden="true" scrolling="no" />;
+  return <span className="ig-crop"><iframe src={embedUrl(reel)} title={reel.title || "Video de Instagram"} loading="lazy" tabIndex={-1} aria-hidden="true" scrolling="no" /></span>;
 }
 
 // «VD Reels»: videos verticales de Instagram con reproductor a pantalla completa.
@@ -70,8 +68,8 @@ export default function ReelsStrip({ reels, variant = "strip" }: Props) {
 
       {mounted && current && createPortal(
         <div className="reel-viewer" role="dialog" aria-modal="true" aria-label={current.title || "Video de VD Noticias"} onClick={close}>
-          <div className={`reel-viewer-frame is-${current.format ?? "reel"}`} style={{ ["--ratio" as string]: RATIO[current.format ?? "reel"] }} onClick={(event) => event.stopPropagation()}>
-            <iframe key={current.id} src={embedUrl(current)} title={current.title || "Video de Instagram"} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen scrolling="no" />
+          <div className="reel-viewer-frame" onClick={(event) => event.stopPropagation()}>
+            <span className="ig-crop is-player"><iframe key={current.id} src={embedUrl(current)} title={current.title || "Video de Instagram"} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen scrolling="no" /></span>
           </div>
           <button type="button" className="reel-viewer-close" onClick={close} aria-label="Cerrar video">
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
