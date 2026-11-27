@@ -54,14 +54,7 @@ export default function ReelsStrip({ reels, variant = "strip" }: Props) {
         {reels.map((reel, index) => (
           <button type="button" key={reel.id} className={`reel-card is-${reel.format ?? "reel"}`} onClick={() => setOpenIndex(index)} aria-label={`Ver video: ${reel.title || "VD Noticias"}`}>
             <span className="reel-cover"><Cover reel={reel} /></span>
-            <span className="reel-shade" aria-hidden="true" />
             <span className="reel-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg></span>
-            {(reel.category || reel.title) && (
-              <span className="reel-text">
-                {reel.category && <em>{reel.category}</em>}
-                {reel.title && <b>{reel.title}</b>}
-              </span>
-            )}
           </button>
         ))}
       </div>

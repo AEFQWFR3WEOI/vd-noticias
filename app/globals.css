@@ -3573,7 +3573,7 @@ html.header-hidden .vd-header { transform: translateY(calc(-1 * var(--masthead-h
    la cabecera (54 px), las franjas laterales ni el pie de Instagram.
    El video ocupa el 70.3 % central del área 4:5 del embed. */
 .ig-crop { position: absolute; inset: 0; overflow: hidden; container-type: size; background: #000; }
-.ig-crop iframe { position: absolute; top: -54px; left: -21.11cqw; width: 142.22cqw; height: calc(54px + 177.78cqw + 320px); border: 0; transform: none; max-height: none; }
+.ig-crop iframe { position: absolute; top: -54px; left: -21.11cqw; width: 142.22cqw; height: calc(54px + 177.78cqw + 320px); border: 0; transform: none; max-height: none; max-width: none; }
 .reel-cover .ig-crop iframe { pointer-events: none; }
 .reel-viewer-frame { position: relative; width: min(92vw, calc(88vh * 9 / 16), 460px); height: auto; aspect-ratio: 9 / 16; border-radius: 14px; overflow: hidden; background: #000; }
 .reel-viewer-frame .ig-crop iframe { background: #000; }
