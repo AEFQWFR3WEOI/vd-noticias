@@ -3546,3 +3546,25 @@ html.header-hidden .vd-header { transform: translateY(calc(-1 * var(--masthead-h
   .reel-viewer-nav.is-next { right: 18px; }
   .reel-viewer-close { top: 12px; right: 12px; background: rgba(0,0,0,.45); }
 }
+
+/* Formatos: reel vertical 9:16, publicación 4:5, horizontal 16:9 */
+.reel-card.is-post { aspect-ratio: 4 / 5; }
+.reel-card.is-horizontal { aspect-ratio: 16 / 9; }
+.reels-strip { align-items: flex-end; }
+.reels-strip .reel-card.is-post { flex-basis: 300px; }
+.reels-strip .reel-card.is-horizontal { flex-basis: 420px; }
+.reels-strip .reel-card.is-reel { flex-basis: 210px; }
+.reel-card.is-post .reel-cover iframe, .reel-card.is-horizontal .reel-cover iframe { transform: scale(1.12); transform-origin: center 46%; }
+.reels-grid { grid-auto-flow: dense; }
+.reels-grid .reel-card.is-horizontal { grid-column: span 2; }
+/* El visor ajusta su tamaño al formato (el embed de Instagram añade ~200 px de cabecera y pie) */
+.reel-viewer-frame { width: min(92vw, calc((88vh - 200px) / var(--ratio, 1.78)), 620px); height: auto; aspect-ratio: auto; }
+.reel-viewer-frame iframe { height: calc(min(92vw, calc((88vh - 200px) / var(--ratio, 1.78)), 620px) * var(--ratio, 1.78) + 200px); max-height: 92vh; }
+@media (max-width: 720px) {
+  .reels-strip .reel-card.is-post { flex-basis: 62%; }
+  .reels-strip .reel-card.is-horizontal { flex-basis: 86%; }
+  .reels-strip .reel-card.is-reel { flex-basis: 44%; }
+  .reels-grid .reel-card.is-horizontal { grid-column: 1 / -1; }
+  .reel-viewer-frame { width: 100vw; height: auto; }
+  .reel-viewer-frame iframe { height: min(100dvh, calc(100vw * var(--ratio, 1.78) + 200px)); max-height: 100dvh; }
+}

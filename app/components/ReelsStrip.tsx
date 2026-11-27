@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-export type ReelItem = { id: number; url: string; title: string; category: string; coverUrl: string };
+export type ReelItem = { id: number; url: string; title: string; category: string; coverUrl: string; format?: "reel" | "post" | "horizontal" };
+
+const RATIO: Record<string, number> = { reel: 16 / 9, post: 5 / 4, horizontal: 9 / 16 };
 
 type Props = { reels: ReelItem[]; variant?: "strip" | "grid" };
 
@@ -51,7 +53,7 @@ export default function ReelsStrip({ reels, variant = "strip" }: Props) {
     <>
       <div className={`reels-list reels-${variant}`}>
         {reels.map((reel, index) => (
-          <button type="button" key={reel.id} className="reel-card" onClick={() => setOpenIndex(index)} aria-label={`Ver video: ${reel.title || "VD Noticias"}`}>
+          <button type="button" key={reel.id} className={`reel-card is-${reel.format ?? "reel"}`} onClick={() => setOpenIndex(index)} aria-label={`Ver video: ${reel.title || "VD Noticias"}`}>
             <span className="reel-cover"><Cover reel={reel} /></span>
             <span className="reel-shade" aria-hidden="true" />
             <span className="reel-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg></span>
@@ -67,7 +69,7 @@ export default function ReelsStrip({ reels, variant = "strip" }: Props) {
 
       {mounted && current && createPortal(
         <div className="reel-viewer" role="dialog" aria-modal="true" aria-label={current.title || "Video de VD Noticias"} onClick={close}>
-          <div className="reel-viewer-frame" onClick={(event) => event.stopPropagation()}>
+          <div className={`reel-viewer-frame is-${current.format ?? "reel"}`} style={{ ["--ratio" as string]: RATIO[current.format ?? "reel"] }} onClick={(event) => event.stopPropagation()}>
             <iframe key={current.id} src={embedUrl(current)} title={current.title || "Video de Instagram"} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen scrolling="no" />
           </div>
           <button type="button" className="reel-viewer-close" onClick={close} aria-label="Cerrar video">

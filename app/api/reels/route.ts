@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { getDbReady } from "../../../db";
 import { auditLog, videoReels } from "../../../db/schema";
 import { getEditorialUser } from "../../lib/editorial-auth";
-import { getReels, parseInstagramUrl } from "../../lib/reels";
+import { getReels, isReelFormat, parseInstagramUrl } from "../../lib/reels";
 
 export async function GET() {
   return Response.json({ reels: await getReels(60) });
@@ -12,7 +12,7 @@ export async function GET() {
 export async function POST(request: Request) {
   const user = await getEditorialUser();
   if (!user) return Response.json({ error: "Acceso no autorizado" }, { status: 401 });
-  let body: { url?: string; title?: string; category?: string; coverUrl?: string };
+  let body: { url?: string; title?: string; category?: string; coverUrl?: string; format?: string };
   try {
     body = await request.json();
   } catch {
@@ -28,13 +28,14 @@ export async function POST(request: Request) {
     title: String(body.title ?? "").trim().slice(0, 200),
     category: String(body.category ?? "").trim().slice(0, 40),
     coverUrl: coverUrl.startsWith("/api/media/") || coverUrl.startsWith("https://") ? coverUrl.slice(0, 500) : "",
+    format: isReelFormat(body.format) ? body.format : parsed.format,
     active: true,
     createdBy: user.email,
   };
   const [reel] = await db
     .insert(videoReels)
     .values(values)
-    .onConflictDoUpdate({ target: videoReels.shortcode, set: { title: values.title, category: values.category, coverUrl: values.coverUrl, active: true } })
+    .onConflictDoUpdate({ target: videoReels.shortcode, set: { title: values.title, category: values.category, coverUrl: values.coverUrl, format: values.format, active: true } })
     .returning();
   await db.insert(auditLog).values({ actorEmail: user.email, action: "reel.added", entityType: "video_reel", entityId: String(reel.id), detail: parsed.url });
   return Response.json({ reel }, { status: 201 });

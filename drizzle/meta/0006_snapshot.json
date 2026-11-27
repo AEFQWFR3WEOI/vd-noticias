@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "54bc8a37-df63-418b-9622-4e49e70b8264",
+  "id": "eb852fb6-db8b-4a71-a6fb-aa0bc26b1908",
   "prevId": "0f44abf0-2088-4379-9905-11f547b591c7",
   "tables": {
     "ad_campaigns": {
@@ -1316,6 +1316,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": "''"
+        },
+        "format": {
+          "name": "format",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'reel'"
         },
         "active": {
           "name": "active",

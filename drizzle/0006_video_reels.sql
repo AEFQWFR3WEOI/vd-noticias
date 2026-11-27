@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS `video_reels` (
 	`title` text DEFAULT '' NOT NULL,
 	`category` text DEFAULT '' NOT NULL,
 	`cover_url` text DEFAULT '' NOT NULL,
+	`format` text DEFAULT 'reel' NOT NULL,
 	`active` integer DEFAULT true NOT NULL,
 	`created_by` text NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL
