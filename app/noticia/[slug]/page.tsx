@@ -119,6 +119,10 @@ export default async function ArticlePage({ params }: Props) {
           <aside className="share-rail"><b>COMPARTIR</b><a href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noreferrer">f</a><a href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`} target="_blank" rel="noreferrer">X</a><a href={`https://wa.me/?text=${shareText}%20${shareUrl}`} target="_blank" rel="noreferrer">wa</a></aside>
           <div className="article-body">
             {paragraphs.map((paragraph, index) => <div key={`${paragraph.slice(0, 24)}-${index}`}><p className={index === 0 ? "dropcap" : ""}>{paragraph}</p>{index === 2 && <aside className="article-ad"><span>PUBLICIDAD</span><strong>Espacio publicitario identificado</strong><small>La publicidad no interviene en las decisiones editoriales.</small></aside>}</div>)}
+            <a className="article-wa-share" href={`https://wa.me/?text=${shareText}%20${shareUrl}`} target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z" /></svg>
+              Comparte esta noticia por WhatsApp
+            </a>
             <footer className="article-endnote">
               <p className="article-endnote-meta"><span>{authorName}</span><span aria-hidden="true">·</span><a href="/terminos">Cómo trabajamos</a><span aria-hidden="true">·</span><a href="/contacto?asunto=correccion">¿Viste un error? Avísanos</a></p>
             </footer>

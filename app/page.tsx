@@ -11,7 +11,7 @@ import ReelsStrip from "./components/ReelsStrip";
 import { getReels } from "./lib/reels";
 import { detectProvince, isProvinceSlug } from "./lib/provinces";
 import { getArticleAuthorName, getBroadcastHub, getPublishedArticles, getRecentVideos, type PublicArticle } from "./lib/public-content";
-import { absoluteUrl, PUBLISHER_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./lib/site-config";
+import { absoluteUrl, PUBLISHER_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL, WHATSAPP_CHANNEL_URL, WHATSAPP_DISPLAY, whatsappLink } from "./lib/site-config";
 import { sectionLabel } from "./lib/section-labels";
 
 export const dynamic = "force-dynamic";
@@ -128,6 +128,15 @@ export default async function Home() {
       </div></section>}
 
       <div className="container"><PulsoRDMap data={pulsoData} /></div>
+
+      <section className="tip-cta" aria-labelledby="tip-cta-title"><div className="container tip-cta-inner">
+        <div><span>TU VOZ EN VD NOTICIAS</span><h2 id="tip-cta-title">¿Viste algo que debe saberse?</h2><p>Envíanos fotos, videos o información. Lo verificamos y tu identidad queda en reserva.</p></div>
+        <div className="tip-cta-actions">
+          <a className="tip-cta-wa" href={whatsappLink("Hola VD Noticias, quiero enviar una denuncia: ")} target="_blank" rel="noopener noreferrer">WhatsApp {WHATSAPP_DISPLAY}</a>
+          <a className="tip-cta-form" href="/denuncia">Usar el formulario</a>
+          {WHATSAPP_CHANNEL_URL && <a className="tip-cta-channel" href={WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer">Únete al canal de WhatsApp</a>}
+        </div>
+      </div></section>
 
       <BroadcastHub data={broadcastHub} videos={uploadedVideos} />
 

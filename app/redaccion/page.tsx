@@ -18,7 +18,7 @@ import {
   canPublish,
   getEditorialUser,
 } from "../lib/editorial-auth";
-import { CampaignManager, PasswordChanger, ReelsManager, TeamManager } from "./AdminTools";
+import { CampaignManager, PasswordChanger, ReelsManager, TeamManager, TipsManager } from "./AdminTools";
 import ArticleEditor from "./ArticleEditor";
 import BroadcastManager from "./BroadcastManager";
 import MediaLibrary from "./MediaLibrary";
@@ -129,6 +129,7 @@ async function Newsroom() {
           <a href="#agentes">◇ Control GEO</a>
           <a href="#nueva">＋ Nueva noticia</a>
           <a href="#contenido">▤ Contenido</a>
+          <a href="#denuncias">⚑ Denuncias</a>
           <a href="#buzon">✉ Buzón</a>
           <a href="#multimedia">▧ Multimedia</a>
           <a href="#reels">▶ Reels de Instagram</a>
@@ -290,6 +291,16 @@ async function Newsroom() {
               ))}
             </div>
           )}
+        </section>
+        <section className="content-panel" id="denuncias">
+          <div className="panel-heading">
+            <div>
+              <span>LECTORES</span>
+              <h2>Denuncias</h2>
+            </div>
+            <p>Lo que envían los lectores desde «Envía tu denuncia», con fotos y videos</p>
+          </div>
+          <TipsManager />
         </section>
         <section className="content-panel" id="buzon">
           <div className="panel-heading">

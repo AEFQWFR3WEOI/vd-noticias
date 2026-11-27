@@ -23,3 +23,13 @@ export function formatPublishedDate(value?: string | null, includeTime = false) 
   }).format(parsed);
 }
 
+
+// WhatsApp de denuncias (el mismo que aparece en los reels) y canal de WhatsApp.
+export const WHATSAPP_NUMBER = "18299123075";
+export const WHATSAPP_DISPLAY = "+1 (829) 912-3075";
+// Pega aquí el enlace del canal de WhatsApp cuando exista (https://whatsapp.com/channel/…).
+export const WHATSAPP_CHANNEL_URL = "";
+
+export function whatsappLink(text: string) {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+}

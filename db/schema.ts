@@ -229,3 +229,18 @@ export const videoReels = sqliteTable("video_reels", {
   createdBy: text("created_by").notNull(),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+// Denuncias enviadas por los lectores desde /denuncia.
+export const citizenTips = sqliteTable("citizen_tips", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull().default(""),
+  phone: text("phone").notNull().default(""),
+  province: text("province").notNull().default(""),
+  place: text("place").notNull().default(""),
+  description: text("description").notNull(),
+  mediaKeys: text("media_keys").notNull().default("[]"),
+  allowCredit: integer("allow_credit", { mode: "boolean" }).notNull().default(false),
+  status: text("status", { enum: ["new", "reviewing", "published", "discarded"] }).notNull().default("new"),
+  ipAddress: text("ip_address").notNull().default(""),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
