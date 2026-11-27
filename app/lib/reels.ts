@@ -16,8 +16,8 @@ export function parseInstagramUrl(value: string) {
     if (!/(^|\.)instagram\.com$/.test(url.hostname)) return null;
     const match = url.pathname.match(/^\/(?:[A-Za-z0-9._]+\/)?(reel|reels|p|tv)\/([A-Za-z0-9_-]{5,40})/);
     if (!match) return null;
-    const kind = match[1] === "p" ? "p" : "reel";
-    return { shortcode: match[2], url: `https://www.instagram.com/${kind}/${match[2]}/`, format: (kind === "reel" ? "reel" : "post") as ReelFormat };
+    // Los videos de la cuenta son reels aunque el enlace venga como /p/.
+    return { shortcode: match[2], url: `https://www.instagram.com/reel/${match[2]}/`, format: "reel" as ReelFormat };
   } catch {
     return null;
   }

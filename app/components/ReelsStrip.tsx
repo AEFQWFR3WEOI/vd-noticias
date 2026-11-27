@@ -5,7 +5,8 @@ import { createPortal } from "react-dom";
 
 export type ReelItem = { id: number; url: string; title: string; category: string; coverUrl: string; format?: "reel" | "post" | "horizontal" };
 
-const RATIO: Record<string, number> = { reel: 16 / 9, post: 5 / 4, horizontal: 9 / 16 };
+// El reproductor de Instagram muestra el video en 4:5 más su cabecera y pie.
+const RATIO: Record<string, number> = { reel: 5 / 4, post: 5 / 4, horizontal: 9 / 16 };
 
 type Props = { reels: ReelItem[]; variant?: "strip" | "grid" };
 
