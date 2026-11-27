@@ -29,6 +29,14 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
+    // www.visiondominicanatv.com → visiondominicanatv.com (una sola dirección para Google).
+    // La dirección *.workers.dev de producción también lleva al dominio (las
+    // vistas previas de cada rama siguen funcionando en su propia dirección).
+    if (url.hostname === "www.visiondominicanatv.com" || url.hostname === "vd-noticias.miguelitosuarez112004.workers.dev") {
+      url.hostname = "visiondominicanatv.com";
+      return Response.redirect(url.toString(), 301);
+    }
+
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
       return handleImageOptimization(request, {
