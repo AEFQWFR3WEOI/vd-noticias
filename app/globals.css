@@ -3481,3 +3481,10 @@ html.header-hidden .vd-header { transform: translateY(calc(-1 * var(--masthead-h
 .latest-stage-controls button:hover, .latest-stage-controls button:focus-visible { background: #fff; color: var(--navy); border-color: #fff; transform: scale(1.06); }
 .latest-stage-controls .latest-stage-pause { width: 38px; height: 38px; }
 .latest-stage-controls svg { display: block; }
+
+/* Videos destacado en la barra de secciones */
+.vd-nav-scroll a.is-video { display: inline-flex; align-items: center; gap: 6px; color: var(--red); font-weight: 800; }
+.vd-nav-scroll a.is-video svg { width: 16px; height: 16px; padding: 3px; border-radius: 50%; background: var(--red); color: #fff; }
+.vd-nav-scroll a.is-video:hover { color: var(--navy); }
+/* Bloque de videos cuando no hay en vivo */
+.vd-media-hub.is-videos-only .vd-video-block { margin-top: 8px; }
