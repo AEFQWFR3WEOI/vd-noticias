@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-img-element */
 import type { BroadcastHubData, PublicBroadcastProgram, PublicVideo } from "../lib/public-content";
 import LiveChannelPlayer from "./LiveChannelPlayer";
+import { sectionLabel } from "../lib/section-labels";
 
 function formatTime(value: string) {
   const [hourValue, minute = "00"] = value.split(":");
@@ -71,8 +72,8 @@ export default function BroadcastHub({ data, videos, expanded = false }: { data:
         {videos.length > 0 && <div className="vd-video-block" id="videos">
           {liveVisible && <div className="vd-media-subheading"><div><span>VD PLAY</span><h3>La noticia también se ve</h3></div><a href="/seccion/videos">Todos los videos</a></div>}
           <div className="vd-video-emphasis">
-            <article className="vd-video-featured"><video src={videos[0].url} controls preload="metadata" playsInline /><div><span>{videos[0].articleCategorySlug.toUpperCase()}</span><h3><a href={`/noticia/${videos[0].articleSlug}`}>{videos[0].articleTitle}</a></h3><p>{videos[0].articleSummary}</p><a href={`/noticia/${videos[0].articleSlug}`}>Ver noticia completa</a></div></article>
-            <div className="vd-video-rail">{videos.slice(1, videoLimit).map((video) => <article key={video.id}><video src={video.url} controls preload="metadata" playsInline /><span>{video.articleCategorySlug.toUpperCase()}</span><h4><a href={`/noticia/${video.articleSlug}`}>{video.articleTitle}</a></h4><p>{video.articleSummary}</p></article>)}</div>
+            <article className="vd-video-featured"><video src={videos[0].url} controls preload="metadata" playsInline /><div><span className="kicker">{sectionLabel(videos[0].articleCategorySlug)}</span><h3><a href={`/noticia/${videos[0].articleSlug}`}>{videos[0].articleTitle}</a></h3><p>{videos[0].articleSummary}</p><a href={`/noticia/${videos[0].articleSlug}`}>Ver noticia completa</a></div></article>
+            <div className="vd-video-rail">{videos.slice(1, videoLimit).map((video) => <article key={video.id}><video src={video.url} controls preload="metadata" playsInline /><span className="kicker">{sectionLabel(video.articleCategorySlug)}</span><h4><a href={`/noticia/${video.articleSlug}`}>{video.articleTitle}</a></h4><p>{video.articleSummary}</p></article>)}</div>
           </div>
         </div>}
 

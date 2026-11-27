@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect, @next/next/no-html-link-for-pages */
 
 import { useEffect, useMemo, useState } from "react";
+import { sectionLabel } from "../lib/section-labels";
 
 export type BriefingArticle = { slug: string; title: string; summary: string; category: string };
 
@@ -45,7 +46,7 @@ export function SmartBriefing({ articles }: { articles: BriefingArticle[] }) {
       <div className="briefing-results" aria-live="polite">
         <header><span>LECTURA DE {minutes} MINUTOS</span><b>{visible.length} claves seleccionadas</b></header>
         {visible.map((article, index) => (
-          <article key={article.slug}><b>{String(index + 1).padStart(2, "0")}</b><div><span>{article.category.toUpperCase()}</span><a href={`/noticia/${article.slug}`}>{article.title}</a><small>{article.summary}</small></div></article>
+          <article key={article.slug}><b>{String(index + 1).padStart(2, "0")}</b><div><span className="kicker">{sectionLabel(article.category)}</span><a href={`/noticia/${article.slug}`}>{article.title}</a><small>{article.summary}</small></div></article>
         ))}
         <a className="briefing-action" href="/seccion/ultimas">Abrir resumen completo</a>
       </div>

@@ -12,6 +12,7 @@ import { getReels } from "./lib/reels";
 import { detectProvince, isProvinceSlug } from "./lib/provinces";
 import { getArticleAuthorName, getBroadcastHub, getPublishedArticles, getRecentVideos, type PublicArticle } from "./lib/public-content";
 import { absoluteUrl, PUBLISHER_NAME, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "./lib/site-config";
+import { sectionLabel } from "./lib/section-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ function StoryCard({ article, priority = false }: { article: PublicArticle; prio
     <article className="vd-story-card">
       <a href={`/noticia/${article.slug}`}>
         <EditorialMedia src={articleImage(article)} alt={article.title} priority={priority} />
-        <span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span>
+        <span className="kicker">{sectionLabel(article.categorySlug)}</span>
         <h3>{article.title}</h3>
       </a>
       <p>{article.summary}</p>
@@ -108,13 +109,13 @@ export default async function Home() {
           <section className="front-grid" aria-labelledby="portada-heading">
             <h1 id="portada-heading" className="sr-only">Portada de VD Noticias</h1>
             <article className="front-lead">
-              <a href={`/noticia/${lead.slug}`}><div className="front-lead-media"><EditorialMedia src={articleImage(lead)} alt={lead.title} priority /><span>{(sectionLabels[lead.categorySlug] || lead.categorySlug).toUpperCase()}</span></div><h2>{lead.title}</h2></a>
+              <a href={`/noticia/${lead.slug}`}><div className="front-lead-media"><EditorialMedia src={articleImage(lead)} alt={lead.title} priority /><span className="kicker">{sectionLabel(lead.categorySlug)}</span></div><h2>{lead.title}</h2></a>
               <p>{lead.summary}</p><div className="editorial-meta"><b>Redacción VD Noticias</b><span>{readingTime(lead)} min de lectura</span></div>
             </article>
             <div className="front-secondary">
               {secondary.slice(0, 3).map((article) => <StoryCard article={article} key={article.slug} />)}
             </div>
-            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span>{(sectionLabels[article.categorySlug] || article.categorySlug).toUpperCase()}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias</a></aside>
+            <aside className="front-most-read front-visual-selection"><header><span>CURADURÍA HUMANA</span><h2>Selección editorial</h2></header><div className="front-curated-grid">{published.slice(5, 9).map((article) => <article key={article.slug}><a href={`/noticia/${article.slug}`}><EditorialMedia src={articleImage(article)} alt={article.title} /><div><span className="kicker">{sectionLabel(article.categorySlug)}</span><h3>{article.title}</h3><p>{article.summary}</p></div></a></article>)}</div><a className="all-link" href="/seccion/ultimas">Ver todas las noticias</a></aside>
           </section>
         ) : <section className="empty-publication"><span>VD NOTICIAS</span><h1>La próxima edición está en preparación</h1><p>La redacción publicará aquí las informaciones verificadas.</p></section>}
 

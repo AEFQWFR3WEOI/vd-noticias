@@ -3594,3 +3594,19 @@ html.header-hidden .vd-header { transform: translateY(calc(-1 * var(--masthead-h
 .reels-page-hero .vd-reels-ig { display: inline-block; color: #fff; font: 700 13px system-ui, sans-serif; }
 .reels-page-body { padding: 30px 0 50px; }
 .reels-page-body .reels-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+
+/* ===== Etiqueta de sección (antes: rojo, mayúsculas, letras separadas) ===== */
+.kicker {
+  display: inline-flex !important; align-items: center; gap: 7px;
+  font: 700 12.5px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+  letter-spacing: .01em !important; text-transform: none !important;
+  color: var(--blue) !important; background: none !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.kicker::before { content: ""; flex: none; width: 12px; height: 2px; background: var(--red); }
+a.kicker:hover { color: var(--red) !important; }
+/* Sobre fotos: pastilla blanca legible */
+.kicker.on-media {
+  position: absolute; left: 14px; bottom: 14px; z-index: 2;
+  padding: 6px 10px !important; background: rgba(255,255,255,.95) !important; color: var(--navy) !important; border-radius: 3px !important;
+}
