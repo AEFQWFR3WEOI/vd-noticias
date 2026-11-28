@@ -21,6 +21,8 @@ function describeWeather(code: number, isDay: boolean) {
   return { label: "Variable", icon: "🌤️" };
 }
 
+export const dailyDataErrors: string[] = [];
+
 async function cachedJson<T>(url: string, ttlSeconds: number): Promise<T | null> {
   try {
     const response = await fetch(url, {
@@ -28,9 +30,10 @@ async function cachedJson<T>(url: string, ttlSeconds: number): Promise<T | null>
       cf: { cacheTtl: ttlSeconds, cacheEverything: true },
       signal: AbortSignal.timeout(2500),
     } as RequestInit);
-    if (!response.ok) return null;
+    if (!response.ok) { dailyDataErrors.push(`${url.slice(8, 30)} HTTP ${response.status}`); return null; }
     return (await response.json()) as T;
-  } catch {
+  } catch (error) {
+    dailyDataErrors.push(`${url.slice(8, 30)} ${error instanceof Error ? error.message : String(error)}`);
     return null;
   }
 }
