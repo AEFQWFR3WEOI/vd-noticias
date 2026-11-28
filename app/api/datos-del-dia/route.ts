@@ -1,7 +1,8 @@
-import { dailyDataErrors, getDailyData } from "../../lib/daily-data";
+import { getDailyData } from "../../lib/daily-data";
 
+// Clima y tasas para la barra superior (caché de 10 minutos).
 export async function GET() {
-  dailyDataErrors.length = 0;
   const data = await getDailyData();
-  return Response.json({ ...data, errors: [...dailyDataErrors] }, { headers: { "cache-control": "no-store" } });
+  const complete = Boolean(data.weather && data.rates);
+  return Response.json(data, { headers: { "cache-control": complete ? "public, max-age=600, s-maxage=600" : "no-store" } });
 }

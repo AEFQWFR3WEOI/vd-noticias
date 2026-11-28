@@ -2,7 +2,7 @@
 import SectionsMenu, { type MenuEntry } from "./SectionsMenu";
 import HeaderScroll from "./HeaderScroll";
 import { getLiveVisible } from "../lib/public-content";
-import { getDailyData } from "../lib/daily-data";
+import DailyBar from "./DailyBar";
 
 const sections = [
   "Nacionales",
@@ -78,8 +78,7 @@ type HeaderProps = {
 };
 
 export async function PageHeader({ active, showAd = false }: HeaderProps) {
-  const [liveVisible, daily] = await Promise.all([getLiveVisible(), getDailyData()]);
-  const money = (value: number) => value.toLocaleString("es-DO", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const liveVisible = await getLiveVisible();
   const menuEntries = liveVisible ? drawerEntries : drawerEntries
     .filter((entry) => entry.title !== "Pódcasts")
     .map((entry) => {
@@ -94,13 +93,7 @@ export async function PageHeader({ active, showAd = false }: HeaderProps) {
       <div className="vd-topbar">
         <div className="container vd-topbar-inner">
           <span className="vd-topbar-date">{displayDate}</span>
-          {daily.weather
-            ? <span className="vd-topbar-weather" title={`${daily.weather.label} · Máx. ${daily.weather.max}° · Mín. ${daily.weather.min}°`}><i aria-hidden="true">{daily.weather.icon}</i> Santo Domingo <b>{daily.weather.temp}°C</b></span>
-            : <span className="vd-topbar-place">Santo Domingo, República Dominicana</span>}
-          {daily.rates && <span className="vd-topbar-rates" title="Tasa de referencia del mercado, actualizada a diario">
-            <span>Dólar <b>RD${money(daily.rates.usd)}</b></span>
-            <span className="vd-topbar-eur">Euro <b>RD${money(daily.rates.eur)}</b></span>
-          </span>}
+          <DailyBar />
           <nav className="vd-topbar-links" aria-label="Enlaces rápidos">
             <a className="vd-topbar-tip" href="/denuncia">Envía tu denuncia</a>
             <a href="/#boletin">Boletín</a>
