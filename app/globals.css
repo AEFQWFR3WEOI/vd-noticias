@@ -3692,3 +3692,18 @@ a.kicker:hover { color: var(--red) !important; }
   .tip-whatsapp { width: 100%; justify-content: center; }
   .tip-form { grid-template-columns: 1fr; }
 }
+
+/* Datos del día en la barra superior */
+.vd-topbar-weather, .vd-topbar-rates { display: inline-flex; align-items: center; gap: 6px; padding-left: 18px; border-left: 1px solid rgba(255,255,255,.14); white-space: nowrap; }
+.vd-topbar-weather i { font-style: normal; font-size: 13px; }
+.vd-topbar-weather b, .vd-topbar-rates b { color: #fff; font-weight: 700; }
+.vd-topbar-rates { gap: 16px; }
+.footer-data-credits { font-size: 11px; opacity: .75; }
+.footer-data-credits a { text-decoration: underline; }
+@media (max-width: 1100px) { .vd-topbar-eur { display: none; } }
+@media (max-width: 720px) {
+  .vd-topbar-inner { gap: 10px; overflow: hidden; }
+  .vd-topbar-date { display: none; }
+  .vd-topbar-weather { padding-left: 0; border-left: 0; }
+  .vd-topbar-rates { padding-left: 10px; }
+}
