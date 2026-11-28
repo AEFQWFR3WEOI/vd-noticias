@@ -3707,3 +3707,5 @@ a.kicker:hover { color: var(--red) !important; }
   .vd-topbar-weather { padding-left: 0; border-left: 0; }
   .vd-topbar-rates { padding-left: 10px; }
 }
+.vd-topbar-links a { white-space: nowrap; }
+@media (max-width: 420px) { .vd-topbar-city { display: none; } }
