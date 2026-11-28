@@ -2,6 +2,7 @@
 import SectionsMenu, { type MenuEntry } from "./SectionsMenu";
 import HeaderScroll from "./HeaderScroll";
 import { getLiveVisible } from "../lib/public-content";
+import DailyBar from "./DailyBar";
 
 const sections = [
   "Nacionales",
@@ -92,7 +93,7 @@ export async function PageHeader({ active, showAd = false }: HeaderProps) {
       <div className="vd-topbar">
         <div className="container vd-topbar-inner">
           <span className="vd-topbar-date">{displayDate}</span>
-          <span className="vd-topbar-place">Santo Domingo, República Dominicana</span>
+          <DailyBar />
           <nav className="vd-topbar-links" aria-label="Enlaces rápidos">
             <a className="vd-topbar-tip" href="/denuncia">Envía tu denuncia</a>
             <a href="/#boletin">Boletín</a>
@@ -169,6 +170,7 @@ export async function PageFooter() {
       <div className="container footer-legal">
         <span>© 2026 Visión Dominicana TV. Todos los derechos reservados.</span>
         <span><a href="/terminos">Términos y privacidad</a> · Santo Domingo, República Dominicana</span>
+        <span className="footer-data-credits">Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Tasas: <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a></span>
       </div>
     </footer>
   );
